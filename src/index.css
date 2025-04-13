@@ -39,8 +39,23 @@ h1 {
   letter-spacing: -0.015em;
 }
 
-h2 {
-  color: #d1d5db;
+h2 a,
+h2 a:visited {
+  color: #fff !important;
+  text-decoration: none;
+}
+h2 a:active {
+  color: #fff !important;
+  text-decoration: none;
+}
+
+h2 a:hover {
+  text-decoration: underline;
+}
+
+h2 .active-link {
+  text-decoration: underline;
+  font-weight: 600;
 }
 
 p {
