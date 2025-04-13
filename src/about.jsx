@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function about() {
   return (
     <div>
-      <h2 ><Link to="/">About</Link> / <Link to="/docs">Docs</Link></h2>
+      <h2 ><Link to="/">About</Link> | <Link to="/docs">Docs</Link></h2>
 
       <p>I'm a DevOps engineer who lives in Azure, Terraform, and Databricks.</p>
 
