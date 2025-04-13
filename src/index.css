@@ -39,6 +39,10 @@ h1 {
   letter-spacing: -0.015em;
 }
 
+h2 {
+  color: #d1d5db;
+}
+
 p {
   font-size: 15px;
   color: #d1d5db;
