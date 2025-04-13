@@ -40,22 +40,20 @@ h1 {
 }
 
 h2 a,
-h2 a:visited {
+h2 a:visited,
+h2 a:active,
+h2 a:focus {
   color: #fff !important;
-  text-decoration: none;
-}
-h2 a:active {
-  color: #fff !important;
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 h2 a:hover {
-  text-decoration: underline;
+  text-decoration: underline !important;
 }
 
 h2 .active-link {
-  text-decoration: underline;
-  font-weight: 600;
+  text-decoration: underline !important;
+  font-weight: 600 !important;
 }
 
 p {
