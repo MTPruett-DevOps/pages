@@ -85,11 +85,13 @@ button {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   font-family: 'Figtree', sans-serif;
+  color: #0f172a;
+  text-decoration: none;
 }
 
 button:hover {
   background-color: #007acc;
-  color: #d1d5db;;
+  color: #d1d5db;
   border-color: #007acc;
   transform: scale(1.03);
 }
