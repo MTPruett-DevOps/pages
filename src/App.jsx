@@ -1,8 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Header from "./pages/header"
-import About from "./pages/about";
-import Docs from "./pages/docs";
+import Header from "./header"
+import About from "./about";
+import Docs from "./docs";
 
 export default function App() {
   return (
