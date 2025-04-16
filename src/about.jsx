@@ -4,7 +4,13 @@ import { Link } from "react-router-dom";
 export default function about() {
   return (
     <div>
-      <h2 ><Link to="/">About</Link> | <Link to="/docs">Docs</Link></h2>
+      <p style={{ marginBottom: "2rem" }}>
+        If you want to skip the intro, I don’t blame you —
+        <Link to="/docs" className="skip-doc-link">
+          jump straight to the documentation.
+        </Link>
+      </p>
+
 
       <p>I'm a DevOps engineer who lives in Azure, Terraform, and Databricks.</p>
 
