@@ -5,7 +5,7 @@ export default function about() {
   return (
     <div>
       <p style={{ marginBottom: "2rem" }}>
-        If you want to skip the intro, I don’t blame you —
+        If you want to skip the intro, I don’t blame you —{" "}
         <Link to="/docs" className="skip-doc-link">
           jump straight to the documentation.
         </Link>
