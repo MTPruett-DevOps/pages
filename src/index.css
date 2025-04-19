@@ -109,7 +109,9 @@ button:focus {
   font-size: 2rem;
 }
 
-.name-link:hover,
+.name-link:hover {
+  text-decoration: none !important;
+}
 .name-link:focus {
   text-decoration: underline;
 }
