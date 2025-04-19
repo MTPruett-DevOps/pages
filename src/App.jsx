@@ -33,6 +33,8 @@ export default function App() {
 
   const transitionToDocs = (e) => {
     e.preventDefault();
+    setActivePostPath("");   // ✅ clear highlight
+    setPostContent("");      // ✅ clear markdown content
     setAboutCollapsed(true);
     setTimeout(() => setDocsMode(true), 800);
   };
