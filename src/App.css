@@ -154,9 +154,9 @@
 /* Only apply hover effects on devices that support hover */
 @media (hover: hover) and (pointer: fine) {
   .nav-button:hover:not(.active-post-button) {
-    background-color: #007acc;
-    color: #d1d5db;
-    border-color: #007acc;
+    background-color: #d1d5db;
+    color: #0f172a;
+    border-color: #ccc;
     transform: scale(1.03);
   }
 
