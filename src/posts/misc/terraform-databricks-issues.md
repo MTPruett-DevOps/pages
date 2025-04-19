@@ -48,10 +48,9 @@ This is often due to a missing or mismatched App Registration in Azure Entra ID.
 
 **Resolution:**
 
-- Ensure the App Registration for the target resource exists and is not deleted.
-- Verify both the Enterprise Application and the App Registration reside in the same Azure tenant as the Managed Identity.
-- If working across tenants, consider using service principal credentials instead of MSI.
+- Ensure the Managed Identity for the target resource exists and is not deleted.
+- Verify both the Enterprise Application and the Managed Identity reside in the same Azure tenant as the Managed Identity.
 
 **Key Takeaway:**
 
-The presence of an Enterprise Application alone is insufficient—an active App Registration must exist within the correct tenant for MSI authentication to succeed.
+The presence of an Enterprise Application alone is insufficient — an active Managed Identity must exist within the correct tenant for MSI authentication to succeed.
