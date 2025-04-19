@@ -57,6 +57,7 @@
   transform: scale(1.05);
 }
 
+/* Intro / About */
 .about-section {
   opacity: 1;
   transition: opacity 0.4s ease, transform 0.4s ease;
@@ -64,7 +65,7 @@
 }
 
 .fade-in {
-  animation: fadeInDown 0.6s ease forwards;
+  animation: fadeInUp 0.5s ease forwards;
   opacity: 0;
 }
 
@@ -73,13 +74,13 @@
 }
 
 .fade-out {
-  animation: fadeOutDown 0.4s ease forwards;
+  animation: fadeOutUp 0.4s ease forwards;
 }
 
-@keyframes fadeInDown {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(-40px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
@@ -98,6 +99,17 @@
   }
 }
 
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
 .skip-doc-link {
   text-decoration: underline;
   color: inherit;
@@ -110,6 +122,7 @@
   transform: scale(1.05);
 }
 
+/* Navigation Buttons */
 .main-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -150,4 +163,53 @@
     width: 100%;
     max-width: 280px;
   }
+}
+
+/* Markdown Styling */
+.markdown {
+  margin-top: 2rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #d1d5db;
+  text-align: left;
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  color: #ffffff;
+  margin-top: 1.25rem;
+}
+
+.markdown ul,
+.markdown ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.markdown a {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
+.markdown pre,
+.markdown pre code {
+  background-color: #1e293b;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  display: block;
+  color: #d1d5db;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.markdown code {
+  background-color: #1e293b;
+  color: #d1d5db;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
 }
