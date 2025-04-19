@@ -57,7 +57,7 @@
   transform: scale(1.05);
 }
 
-/* Intro / About */
+/* About Section */
 .about-section {
   opacity: 1;
   transition: opacity 0.4s ease, transform 0.4s ease;
@@ -153,19 +153,7 @@
   transform: scale(1.03);
 }
 
-@media (max-width: 600px) {
-  .main-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .nav-button {
-    width: 100%;
-    max-width: 280px;
-  }
-}
-
-/* Markdown Styling */
+/* Markdown Content */
 .markdown {
   margin-top: 2rem;
   font-size: 1rem;
@@ -212,4 +200,34 @@
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
   font-family: monospace;
+}
+
+/* Mobile Fixes */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .main-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav-button {
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .markdown {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .markdown pre,
+  .markdown code {
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 }
