@@ -66,7 +66,7 @@ export default function App() {
       setTimeout(() => {
         setOpenFolders((prev) => prev.filter((f) => f !== folder));
         setClosingFolders((prev) => prev.filter((f) => f !== folder));
-      }, 50);
+      }, 100);
     } else {
       setOpenFolders((prev) => [...prev, folder]);
     }
