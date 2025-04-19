@@ -36,7 +36,12 @@ export default function App() {
     setActivePostPath("");
     setPostContent("");
     setAboutCollapsed(true);
-    setTimeout(() => setDocsMode(true), 800);
+    setAboutCollapsed(true);
+    setTimeout(() => {
+      setDocsMode(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50); // Matches or exceeds the fade-out duration
+
   };
 
   const returnToAbout = () => {
@@ -51,7 +56,7 @@ export default function App() {
       setAboutCollapsed(false);
       setFadingOut(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 800);
+    }, 50);
   };
 
   const toggleFolder = (folder) => {
@@ -61,7 +66,7 @@ export default function App() {
       setTimeout(() => {
         setOpenFolders((prev) => prev.filter((f) => f !== folder));
         setClosingFolders((prev) => prev.filter((f) => f !== folder));
-      }, 800);
+      }, 50);
     } else {
       setOpenFolders((prev) => [...prev, folder]);
     }
