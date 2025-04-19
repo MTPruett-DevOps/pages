@@ -1,3 +1,5 @@
+/* GLOBAL BASE STYLES - index.css */
+
 body {
   margin: 0;
   background-color: #0f172a;
@@ -15,28 +17,7 @@ body {
   padding: 3rem 1rem;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* keep it centered horizontally */
-  gap: 1rem; /* spacing between avatar and name */
-}
-
-.avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 1px solid #4b5563;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  object-fit: cover;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-}
-
-.avatar:hover {
-  transform: scale(1.1);
-}
-
+/* Headings and Links */
 h1 {
   font-size: 2rem;
   font-weight: 600;
@@ -52,30 +33,33 @@ h2 a:focus {
   text-decoration: none !important;
 }
 
-h2 a:hover {
-  text-decoration: underline !important;
-}
-
+h2 a:hover,
 h2 .active-link {
   text-decoration: underline !important;
   font-weight: 600 !important;
 }
 
+/* Paragraphs and Lists */
 p {
   font-size: 15px;
-  color: #d1d5db;
   line-height: 1.75;
   margin-bottom: 1.5rem;
   text-align: left;
+  color: #d1d5db;
 }
 
 ul {
-  text-align: left;
-  padding-left: 1rem;
+  list-style: none;
+  padding-left: 0;
   margin-bottom: 2rem;
   color: #d1d5db;
 }
 
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* Buttons (shared styles) */
 button {
   background-color: #d1d5db;
   border: 1px solid #ccc;
@@ -101,45 +85,33 @@ button:focus {
   box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.4);
 }
 
-ul {
-  list-style: none;
-  padding-left: 0;
+/* Avatar */
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid #4b5563;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+  transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
-li {
-  margin-bottom: 0.5rem;
+.avatar:hover {
+  transform: scale(1.1);
 }
 
+/* Links styled like buttons/text */
 .name-link {
-  all: unset; /* 💀 Reset everything */
+  all: unset;
   cursor: pointer;
   display: inline-block;
+  font-size: 2rem;
 }
 
-.name-link:hover {
-  text-decoration: none;
-}
-
-.name-link:focus,
-.name-link:focus-visible,
-.name-link:active {
-  text-decoration: none;
-  outline: none;
-  box-shadow: none;
-}
-
-.avatar-button {
-  all: unset;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 0;
-  border-radius: 50%;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  margin-right: 1rem;
+.name-link:hover,
+.name-link:focus {
+  text-decoration: underline;
 }
 
 a.skip-doc-link {
