@@ -62,7 +62,7 @@
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* Mobile tap protection during fade-in */
+/* Prevent accidental taps while fading in */
 .content-wrapper.fade-in-down {
   pointer-events: none;
   animation: fadeInDown 0.6s ease forwards;
@@ -152,6 +152,21 @@
   transform: scale(1.03);
 }
 
+/* Fix: prevent ghost hover/focus on mobile */
+.nav-button:focus,
+.nav-button:focus-visible,
+.nav-button:active {
+  outline: none;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.nav-button:not(:hover):not(.active-post-button) {
+  background-color: #d1d5db;
+  color: #0f172a;
+  border-color: #ccc;
+}
+
 .active-post-button {
   background-color: #007acc;
   color: white;
@@ -191,7 +206,6 @@
   word-break: break-word;
 }
 
-/* Mobile responsive */
 @media (max-width: 600px) {
   .main-buttons,
   .sub-buttons-line {
