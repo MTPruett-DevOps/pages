@@ -50,16 +50,11 @@
   font-size: 2rem;
   color: inherit;
   text-decoration: none;
+  transition: transform 0.2s ease;
 }
-.name-link:hover{
-  text-decoration: none !important;
+
+.name-link:hover {
   transform: scale(1.05);
-}
-.name-link:focus {
-  text-decoration: none !important;
-}
-.name-link:active{
-  text-decoration: none !important;
 }
 
 .about-section {
@@ -68,57 +63,17 @@
   transform-origin: center;
 }
 
-.skip-doc-link {
-  text-decoration: underline;
-  color: inherit;
-  cursor: pointer;
-  display: inline-block;
-  transition: transform 0.2s ease;
-}
-
-.skip-doc-link:hover {
-  transform: scale(1.05);
-}
-
-.main-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 2rem;
-  opacity: 1;
-  transition: opacity 0.4s ease;
-  flex-wrap: wrap;              /* ✅ allow wrapping */
-  padding: 0 1rem;              /* ✅ give a little side padding */
-  text-align: center;
-}
-
-.nav-button {
-  flex-shrink: 0;               /* ✅ don't let them get squished */
-  max-width: 100%;              /* ✅ avoid overflow */
-  word-break: break-word;       /* ✅ break long button text if needed */
-}
-
-
-.nav-button {
-  padding: 0.5rem 1.25rem;
-  border-radius: 999px;
-  font: inherit;
-  margin: 0.25rem;
-  transition: all 0.3s ease;
-}
-
 .fade-in {
   animation: fadeInUp 0.6s ease forwards;
   opacity: 0;
 }
 
-.fade-out {
-  animation: fadeOutDown 0.4s ease forwards;
-  opacity: 1;
-}
-
 .fade-out-down {
   animation: fadeOutDown 0.4s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOutUp 0.4s ease forwards;
 }
 
 @keyframes fadeInUp {
@@ -143,6 +98,67 @@
   }
 }
 
-.hidden {
-  display: none;
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+.skip-doc-link {
+  text-decoration: underline;
+  color: inherit;
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.skip-doc-link:hover {
+  transform: scale(1.05);
+}
+
+.main-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.nav-button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font: inherit;
+  margin: 0.25rem;
+  transition: all 0.3s ease;
+  background-color: #d1d5db;
+  border: 1px solid #ccc;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background-color: #007acc;
+  color: #d1d5db;
+  border-color: #007acc;
+  transform: scale(1.03);
+}
+
+@media (max-width: 600px) {
+  .main-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav-button {
+    width: 100%;
+    max-width: 280px;
+  }
 }
