@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import { marked } from "marked";
-import About from "./about";
+import About from "./about"; // updated lowercase + direct from src
 
 const allPostFiles = import.meta.glob("./posts/**/*.md", { as: "raw" });
 
@@ -90,7 +90,9 @@ export default function App() {
       {docsMode && (
         <div className={`content-wrapper ${fadingOut ? "fade-out-down" : "fade-in-down"}`}>
           <div className="main-buttons">
-            <button className="nav-button" onClick={returnToAbout}>About</button>
+            <div className="about-button-wrapper">
+              <button className="nav-button" onClick={returnToAbout}>About</button>
+            </div>
 
             {Object.keys(folderToPosts).map((folder) => (
               <div key={folder} className="folder-block">
