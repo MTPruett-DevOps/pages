@@ -51,64 +51,10 @@
   color: inherit;
   text-decoration: none;
   transition: transform 0.2s ease;
-  font-family: 'Figtree', system-ui, sans-serif;
 }
 
 .name-link:hover {
   transform: scale(1.05);
-}
-
-/* About Section */
-.about-section {
-  opacity: 1;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  transform-origin: center;
-}
-
-.fade-in {
-  animation: fadeInUp 0.5s ease forwards;
-  opacity: 0;
-}
-
-.fade-out-down {
-  animation: fadeOutDown 0.4s ease forwards;
-}
-
-.fade-out {
-  animation: fadeOutUp 0.4s ease forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOutDown {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-}
-
-@keyframes fadeOutUp {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
 }
 
 .skip-doc-link {
@@ -123,39 +69,67 @@
   transform: scale(1.05);
 }
 
-/* Navigation Buttons */
+.about-section {
+  transition: all 0.4s ease;
+}
+
+/* ------------------- BUTTON LAYOUT ------------------- */
+
 .main-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
   margin-top: 2rem;
-  opacity: 1;
-  transition: opacity 0.4s ease;
+  align-items: flex-start;
 }
 
-.nav-button {
+.folder-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0.5rem;
+}
+
+.sub-buttons-line {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  gap: 0.5rem;
+}
+
+.nav-button,
+.sub-post-button {
   padding: 0.5rem 1.25rem;
   border-radius: 999px;
   font: inherit;
-  margin: 0.25rem;
+  margin: 0.25rem 0;
   transition: all 0.3s ease;
   background-color: #d1d5db;
   border: 1px solid #ccc;
   font-weight: 600;
   color: #0f172a;
   cursor: pointer;
-  font-family: 'Figtree', system-ui, sans-serif;
+  min-width: 160px;
+  max-width: 220px;
+  word-break: break-word;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  text-align: center;
 }
 
-.nav-button:hover {
+.nav-button:hover,
+.sub-post-button:hover {
   background-color: #007acc;
   color: #d1d5db;
   border-color: #007acc;
   transform: scale(1.03);
 }
 
-/* Markdown Content */
+/* ------------------- MARKDOWN CONTENT ------------------- */
+
 .markdown {
   margin-top: 2rem;
   font-size: 1rem;
@@ -166,7 +140,6 @@
   opacity: 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  font-family: 'Figtree', system-ui, sans-serif;
 }
 
 .markdown h1,
@@ -176,19 +149,8 @@
   margin-top: 1.25rem;
 }
 
-.markdown ul,
-.markdown ol {
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.markdown a {
-  color: #38bdf8;
-  text-decoration: underline;
-}
-
 .markdown pre,
-.markdown pre code {
+.markdown code {
   background-color: #1e293b;
   padding: 1rem;
   border-radius: 6px;
@@ -196,19 +158,72 @@
   display: block;
   color: #d1d5db;
   white-space: pre-wrap;
-  word-wrap: break-word;
-  font-family: 'Figtree', system-ui, monospace;
+  word-break: break-word;
+  font-family: monospace;
 }
 
-.markdown code {
-  background-color: #1e293b;
-  color: #d1d5db;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-family: 'Figtree', system-ui, monospace;
+/* ------------------- ANIMATIONS ------------------- */
+
+.fade-in-down {
+  animation: fadeInDown 0.5s ease forwards;
+  opacity: 0;
+}
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Mobile Fixes */
+.fade-out-down {
+  animation: fadeOutDown 0.4s ease forwards;
+}
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-out-up {
+  animation: fadeOutUp 0.4s ease forwards;
+}
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+/* ------------------- RESPONSIVE ------------------- */
+
 @media (max-width: 600px) {
   .container {
     padding: 1rem;
@@ -216,23 +231,17 @@
 
   .main-buttons {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
   }
 
-  .nav-button {
+  .sub-buttons-line {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav-button,
+  .sub-post-button {
     width: 100%;
     max-width: 100%;
-    text-align: center;
-  }
-
-  .markdown {
-    font-size: 0.95rem;
-  }
-
-  .markdown pre,
-  .markdown code {
-    font-size: 0.9rem;
-    white-space: pre-wrap;
-    word-break: break-word;
   }
 }
