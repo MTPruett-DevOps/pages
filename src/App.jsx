@@ -1,21 +1,30 @@
 import React, { useState } from "react";
 import "./App.css";
 
-// Grab all top-level folders even if they only contain a placeholder
-const folderPaths = Object.keys(import.meta.glob("./posts/*/*", {
-  eager: true,
-  as: "raw"
-}));
+// Load markdown files from folders inside ./posts/
+const fileMap = import.meta.glob("./posts/*/*.md", { eager: true, as: "raw" });
 
-const postFolders = folderPaths
-  .map((path) => path.replace("./posts/", "").split("/")[0])
-  .filter((value, index, self) => self.indexOf(value) === index);
+// Group files by folder (skip bad paths)
+const folderToPosts = {};
+Object.keys(fileMap).forEach((path) => {
+  const segments = path.split("/");
+  if (segments.length < 4) return;
+
+  const folder = segments[2];
+  const file = segments[3];
+
+  if (!folderToPosts[folder]) folderToPosts[folder] = [];
+  folderToPosts[folder].push(file.replace(".md", ""));
+});
+
+const postFolders = Object.keys(folderToPosts);
 
 export default function App() {
   const [docsMode, setDocsMode] = useState(false);
   const [aboutCollapsed, setAboutCollapsed] = useState(false);
   const [showPostFolders, setShowPostFolders] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
+  const [expandedFolder, setExpandedFolder] = useState(null);
 
   const transitionToDocs = (e) => {
     e.preventDefault();
@@ -27,14 +36,19 @@ export default function App() {
   };
 
   const returnToAbout = () => {
-    setFadingOut(true); // trigger fade-out
+    setFadingOut(true);
     setTimeout(() => {
       setShowPostFolders(false);
       setDocsMode(false);
       setAboutCollapsed(false);
+      setExpandedFolder(null);
       setFadingOut(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 400);
+  };
+
+  const toggleFolder = (folder) => {
+    setExpandedFolder((prev) => (prev === folder ? null : folder));
   };
 
   return (
@@ -99,24 +113,59 @@ export default function App() {
             <li>Scripting: PowerShell, Bash, SQL, Git, C#</li>
             <li>Tooling: VS Code, Git, terminal life</li>
           </ul>
+
+          <p>Thanks for dropping by.</p>
+
+          <p>
+            Just a heads up — I assume tools like Terraform, Git, VS Code, and any CLIs are already installed if you’re following along.
+            I'll try to skip the setup fluff and get right to the good stuff.
+          </p>
+
+          <p>
+            I take security seriously — so all sensitive tokens will be scrubbed out, and if I’m sharing real-world configs,
+            resource names and GUIDs will be too. Sometimes it might feel like overkill, but better safe than sorry.
+          </p>
         </div>
       )}
 
       {docsMode && (
         <div className={`main-buttons ${fadingOut ? "fade-out" : "fade-in"}`}>
-          <button className="nav-button" onClick={returnToAbout}>About</button>
-          {showPostFolders &&
-            postFolders.map((folder) => {
-              const label = folder
-                .split("-")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ");
-              return (
-                <button key={folder} className="nav-button">
-                  {label}
+          {[{ label: "About", onClick: returnToAbout }, ...postFolders.map((folder) => {
+            const label = folder
+              .split("-")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ");
+            return { label, folder };
+          })].map((item) => {
+            const isFolder = !!item.folder;
+            const isOpen = expandedFolder === item.folder;
+
+            return (
+              <div
+                key={item.label}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginTop: "1rem"
+                }}
+              >
+                <button
+                  className="nav-button"
+                  onClick={() => (isFolder ? toggleFolder(item.folder) : item.onClick())}
+                >
+                  {item.label}
                 </button>
-              );
-            })}
+
+                {isFolder && isOpen &&
+                  folderToPosts[item.folder]?.map((post) => (
+                    <button key={post} className="nav-button fade-in" style={{ marginTop: "0.3rem" }}>
+                      {post}
+                    </button>
+                  ))}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
