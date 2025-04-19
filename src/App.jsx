@@ -33,19 +33,15 @@ export default function App() {
 
   const transitionToDocs = (e) => {
     e.preventDefault();
-  
-    // 👇 Remove any accidental focus from previous click
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-  
+    setActivePostPath("");
+    setPostContent("");
+    setAboutCollapsed(true);
     setAboutCollapsed(true);
     setTimeout(() => {
       setDocsMode(true);
-      setShowFolders(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 800);
-  };  
+    }, 100); // Matches or exceeds the fade-out duration
+  };
 
   const returnToAbout = () => {
     setFadingOut(true);
