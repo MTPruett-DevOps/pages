@@ -39,10 +39,6 @@
   cursor: pointer;
 }
 
-.avatar:hover {
-  transform: scale(1.1);
-}
-
 .name-link {
   all: unset;
   cursor: pointer;
@@ -51,10 +47,6 @@
   color: inherit;
   text-decoration: none;
   transition: transform 0.2s ease;
-}
-
-.name-link:hover {
-  transform: scale(1.05);
 }
 
 .about-wrapper,
@@ -145,14 +137,12 @@
   text-overflow: ellipsis;
 }
 
-.nav-button:hover {
+.active-post-button {
   background-color: #007acc;
-  color: #d1d5db;
+  color: white;
   border-color: #007acc;
-  transform: scale(1.03);
 }
 
-/* Fix: prevent ghost hover/focus on mobile */
 .nav-button:focus,
 .nav-button:focus-visible,
 .nav-button:active {
@@ -161,16 +151,26 @@
   text-decoration: none;
 }
 
-.nav-button:not(:hover):not(.active-post-button) {
-  background-color: #d1d5db;
-  color: #0f172a;
-  border-color: #ccc;
-}
+/* Only apply hover effects on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+  .nav-button:hover:not(.active-post-button) {
+    background-color: #007acc;
+    color: #d1d5db;
+    border-color: #007acc;
+    transform: scale(1.03);
+  }
 
-.active-post-button {
-  background-color: #007acc;
-  color: white;
-  border-color: #007acc;
+  .name-link:hover {
+    transform: scale(1.05);
+  }
+
+  .avatar:hover {
+    transform: scale(1.1);
+  }
+
+  .skip-doc-link:hover {
+    transform: scale(1.05);
+  }
 }
 
 .sub-buttons-line-wrapper {
