@@ -222,3 +222,21 @@
     padding: 0;
   }
 }
+
+@media (hover: none) and (pointer: coarse) {
+  .nav-button:hover {
+    background-color: #d1d5db; /* reset to normal */
+    color: #0f172a;
+    border-color: #ccc;
+    transform: none;
+  }
+
+  .name-link:hover,
+  .skip-doc-link:hover {
+    transform: none;
+  }
+
+  .avatar:hover {
+    transform: none;
+  }
+}
