@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { marked } from "marked";
-import About from "./about"; // updated lowercase + direct from src
+import About from "./about";
 
-const allPostFiles = import.meta.glob("./posts/**/*.md", { as: "raw" });
+const allPostFiles = import.meta.glob("./posts/**/*.md", {
+  query: "?raw",
+  import: "default",
+});
 
 const folderToPosts = {};
 Object.keys(allPostFiles).forEach((path) => {
   const parts = path.split("/");
   const folder = parts[2];
-  const file = parts[3];
   if (!folderToPosts[folder]) folderToPosts[folder] = [];
   folderToPosts[folder].push(path);
 });
@@ -23,38 +25,54 @@ export default function App() {
   const [docsMode, setDocsMode] = useState(false);
   const [aboutCollapsed, setAboutCollapsed] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
-  const [activeFolders, setActiveFolders] = useState(new Set());
+  const [openFolders, setOpenFolders] = useState([]);
+  const [closingFolders, setClosingFolders] = useState([]);
   const [postContent, setPostContent] = useState("");
+  const [activePostPath, setActivePostPath] = useState("");
+  const [postVisible, setPostVisible] = useState(false);
 
   const transitionToDocs = (e) => {
     e.preventDefault();
     setAboutCollapsed(true);
-    setTimeout(() => setDocsMode(true), 400);
+    setTimeout(() => setDocsMode(true), 800);
   };
 
   const returnToAbout = () => {
     setFadingOut(true);
     setTimeout(() => {
       setPostContent("");
-      setActiveFolders(new Set());
+      setActivePostPath("");
+      setPostVisible(false);
+      setOpenFolders([]);
+      setClosingFolders([]);
       setDocsMode(false);
       setAboutCollapsed(false);
       setFadingOut(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 400);
+    }, 800);
   };
 
   const toggleFolder = (folder) => {
-    const next = new Set(activeFolders);
-    next.has(folder) ? next.delete(folder) : next.add(folder);
-    setActiveFolders(next);
+    const isOpen = openFolders.includes(folder);
+    if (isOpen) {
+      setClosingFolders((prev) => [...prev, folder]);
+      setTimeout(() => {
+        setOpenFolders((prev) => prev.filter((f) => f !== folder));
+        setClosingFolders((prev) => prev.filter((f) => f !== folder));
+      }, 800);
+    } else {
+      setOpenFolders((prev) => [...prev, folder]);
+    }
   };
 
   const loadPost = async (path) => {
+    if (path === activePostPath) return;
     const raw = await allPostFiles[path]();
     const html = marked.parse(raw);
+    setActivePostPath(path);
     setPostContent(html);
-    setActiveFolders(new Set());
+    setPostVisible(false);
+    setTimeout(() => setPostVisible(true), 0);
   };
 
   return (
@@ -85,7 +103,11 @@ export default function App() {
         </h1>
       </div>
 
-      {!docsMode && !aboutCollapsed && <About onSkip={transitionToDocs} />}
+      {!docsMode && (
+        <div className={`about-wrapper ${aboutCollapsed ? "fade-out-down" : "fade-in-down"}`}>
+          <About onSkip={transitionToDocs} />
+        </div>
+      )}
 
       {docsMode && (
         <div className={`content-wrapper ${fadingOut ? "fade-out-down" : "fade-in-down"}`}>
@@ -103,24 +125,44 @@ export default function App() {
             ))}
           </div>
 
-          {[...activeFolders].map(folder => (
-            <div key={folder} className="sub-buttons-line">
-              {folderToPosts[folder].map((path) => (
-                <button
-                  key={path}
-                  className="nav-button sub-post-button"
-                  onClick={() => loadPost(path)}
-                >
-                  {formatPostTitle(path)}
-                </button>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
+          {Object.keys(folderToPosts).map((folder) => {
+            const isOpen = openFolders.includes(folder);
+            const isClosing = closingFolders.includes(folder);
+            if (!isOpen && !isClosing) return null;
 
-      {postContent && (
-        <div className="markdown fade-in-up" dangerouslySetInnerHTML={{ __html: postContent }} />
+            return (
+              <div
+                key={folder}
+                className={`sub-buttons-line-wrapper ${
+                  isClosing ? "fade-out" : "fade-in-only"
+                }`}
+              >
+                <div className="sub-buttons-line">
+                  {folderToPosts[folder].map((path) => (
+                    <button
+                      key={path}
+                      className={`nav-button sub-post-button ${
+                        activePostPath === path ? "active-post-button" : ""
+                      }`}
+                      onClick={() => loadPost(path)}
+                    >
+                      {formatPostTitle(path)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          <div className={`post-wrapper ${postVisible ? "fade-in-down" : ""}`}>
+            {postContent && (
+              <div
+                className="markdown"
+                dangerouslySetInnerHTML={{ __html: postContent }}
+              />
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
