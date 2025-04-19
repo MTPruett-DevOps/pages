@@ -33,8 +33,8 @@ export default function App() {
 
   const transitionToDocs = (e) => {
     e.preventDefault();
-    setActivePostPath("");   // ✅ clear highlight
-    setPostContent("");      // ✅ clear markdown content
+    setActivePostPath("");
+    setPostContent("");
     setAboutCollapsed(true);
     setTimeout(() => setDocsMode(true), 800);
   };
@@ -112,7 +112,7 @@ export default function App() {
       )}
 
       {docsMode && (
-        <div className={`content-wrapper ${fadingOut ? "fade-out-down" : "fade-in-down"}`}>
+        <div className={`content-wrapper ${fadingOut ? "fade-out-down" : "fade-in-down visible"}`}>
           <div className="main-buttons">
             <div className="about-button-wrapper">
               <button className="nav-button" onClick={returnToAbout}>About</button>

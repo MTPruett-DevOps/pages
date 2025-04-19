@@ -36,6 +36,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   object-fit: cover;
   transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
 .avatar:hover {
@@ -61,6 +62,16 @@
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
+/* Mobile tap protection during fade-in */
+.content-wrapper.fade-in-down {
+  pointer-events: none;
+  animation: fadeInDown 0.6s ease forwards;
+}
+
+.content-wrapper.fade-in-down.visible {
+  pointer-events: auto;
+}
+
 .fade-in-down {
   animation: fadeInDown 0.6s ease forwards;
   opacity: 0;
@@ -76,7 +87,6 @@
 
 .fade-out {
   animation: fadeOutOnly 0.6s ease forwards;
-  opacity: 1;
 }
 
 @keyframes fadeInDown {
@@ -181,6 +191,7 @@
   word-break: break-word;
 }
 
+/* Mobile responsive */
 @media (max-width: 600px) {
   .main-buttons,
   .sub-buttons-line {
