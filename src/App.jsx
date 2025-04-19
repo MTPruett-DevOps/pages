@@ -1,20 +1,21 @@
 import React, { useState } from "react";
+import { marked } from "marked";
 import "./App.css";
 
-// Load markdown files from folders inside ./posts/
+// Load all markdown files under /posts/*/*.md
 const fileMap = import.meta.glob("./posts/*/*.md", { eager: true, as: "raw" });
 
-// Group files by folder (skip bad paths)
+// Group by folder
 const folderToPosts = {};
-Object.keys(fileMap).forEach((path) => {
+Object.entries(fileMap).forEach(([path, content]) => {
   const segments = path.split("/");
   if (segments.length < 4) return;
 
   const folder = segments[2];
-  const file = segments[3];
+  const file = segments[3].replace(".md", "");
 
   if (!folderToPosts[folder]) folderToPosts[folder] = [];
-  folderToPosts[folder].push(file.replace(".md", ""));
+  folderToPosts[folder].push({ title: file, content });
 });
 
 const postFolders = Object.keys(folderToPosts);
@@ -24,7 +25,8 @@ export default function App() {
   const [aboutCollapsed, setAboutCollapsed] = useState(false);
   const [showPostFolders, setShowPostFolders] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
-  const [expandedFolder, setExpandedFolder] = useState(null);
+  const [openFolders, setOpenFolders] = useState([]);
+  const [selectedPostContent, setSelectedPostContent] = useState(null);
 
   const transitionToDocs = (e) => {
     e.preventDefault();
@@ -41,14 +43,25 @@ export default function App() {
       setShowPostFolders(false);
       setDocsMode(false);
       setAboutCollapsed(false);
-      setExpandedFolder(null);
+      setOpenFolders([]);
+      setSelectedPostContent(null);
       setFadingOut(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 400);
   };
 
   const toggleFolder = (folder) => {
-    setExpandedFolder((prev) => (prev === folder ? null : folder));
+    setOpenFolders((prev) =>
+      prev.includes(folder) ? prev.filter((f) => f !== folder) : [...prev, folder]
+    );
+  };
+
+  const handlePostClick = (content) => {
+    setOpenFolders([]);
+    setSelectedPostContent(null);
+    setTimeout(() => {
+      setSelectedPostContent(content);
+    }, 10);
   };
 
   return (
@@ -138,7 +151,7 @@ export default function App() {
             return { label, folder };
           })].map((item) => {
             const isFolder = !!item.folder;
-            const isOpen = expandedFolder === item.folder;
+            const isOpen = openFolders.includes(item.folder);
 
             return (
               <div
@@ -158,15 +171,24 @@ export default function App() {
                 </button>
 
                 {isFolder && isOpen &&
-                  folderToPosts[item.folder]?.map((post) => (
-                    <button key={post} className="nav-button fade-in" style={{ marginTop: "0.3rem" }}>
-                      {post}
+                  folderToPosts[item.folder]?.map(({ title, content }) => (
+                    <button
+                      key={title}
+                      className="nav-button fade-in"
+                      style={{ marginTop: "0.3rem" }}
+                      onClick={() => handlePostClick(content)}
+                    >
+                      {title}
                     </button>
                   ))}
               </div>
             );
           })}
         </div>
+      )}
+
+      {selectedPostContent && (
+        <div className="markdown fade-in" dangerouslySetInnerHTML={{ __html: marked.parse(selectedPostContent) }} />
       )}
     </div>
   );
