@@ -40,7 +40,7 @@ export default function App() {
     setTimeout(() => {
       setDocsMode(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 50); // Matches or exceeds the fade-out duration
+    }, 100); // Matches or exceeds the fade-out duration
 
   };
 
@@ -56,7 +56,7 @@ export default function App() {
       setAboutCollapsed(false);
       setFadingOut(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 50);
+    }, 100);
   };
 
   const toggleFolder = (folder) => {
