@@ -1,6 +1,6 @@
 # Too Many Workspaces: Why We're Centralizing Databricks
 
-We started with what felt like the right move: give each dev team their own Databricks stack — dev, QA, UAT, and prod. Isolated environments. Clean separation. Minimal cross-team interference.
+We started with what felt like the right move: give each dev team their own Databricks stack — DEV, QA, UAT, and PROD. Isolated environments. Clean separation. Minimal cross-team interference.
 
 But in reality, it turned into a mess.
 
@@ -14,7 +14,7 @@ This isn’t sustainable — not with a lean DevOps team.
 
 ## The New Plan
 
-We're consolidating to **a company-wide stack**: one workspace each for **dev, QA, UAT, and prod**.
+We're consolidating to **a company-wide stack**: one workspace each for **DEV, QA, UAT, and PROD**.
 
 Instead of isolating by environment, we’re separating by **data objects and permissions** inside a shared workspace — which, if you're familiar with Databricks, makes more sense. A workspace is just a container. It’s the permissions and structuring inside it that really determine access.
 
@@ -87,13 +87,13 @@ graph TD
   Fewer workspaces = fewer moving parts = fewer headaches.
 
 - **Cleaner access control:**  
-  One Unity Catalog. One permission model. Enforced properly.
+  One permission model. Enforced properly.
 
 - **DAB makes isolation inside a workspace real:**  
   Bundles + good ACL hygiene = safe multi-team deployments.
 
 - **Fast local dev cycles:**  
-  Devs can still work independently, but we’re not managing 30+ always-on environments.
+  Devs can still work independently, but we’re not managing 30+ different workspaces.
 
 ---
 
