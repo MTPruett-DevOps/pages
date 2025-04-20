@@ -34,7 +34,7 @@ Error: cannot read group: failed during request visitor: inner token: token requ
 
 This error typically occurs when using `azure_use_msi = true` in the Databricks provider block. Terraform attempts to acquire a token via the IMDS endpoint, but the request fails with `identity not found`.
 
-This is often due to a missing or mismatched App Registration in Azure Entra ID. The Managed Identity is present, but the corresponding application registration for the requested resource (e.g., Databricks) is either deleted or exists in a different Azure AD tenant.
+This is often due to a missing Managed Identity (MI) in Azure Entra ID. The enterprise application is present, but the corresponding MI for the requested resource (e.g., Databricks) is either deleted or exists in a different Azure AD tenant.
 
 **Troubleshooting Steps:**
 
@@ -44,12 +44,12 @@ This is often due to a missing or mismatched App Registration in Azure Entra ID.
     GET /metadata/identity/oauth2/token?api-version=2018-02-01&client_id=...&resource=0aa0a0a0-0a00-0aa0-a0a0-a0a0a0a0a0a0
     ```
 3. Identify the `resource` GUID and look it up in Azure Entra ID.
-4. Verify that the App Registration for this resource exists in the same tenant as the Managed Identity.
+4. Verify that the Managed Identity for this resource exists in the same tenant as the Enterprise Application.
 
 **Resolution:**
 
-- Ensure the Managed Identity for the target resource exists and is not deleted.
-- Verify both the Enterprise Application and the Managed Identity reside in the same Azure tenant as the Managed Identity.
+- Ensure the Managed Identity for the target resource exists. 
+- Verify the enterprise application resides in the same Azure tenant as the Managed Identity.
 
 **Key Takeaway:**
 
