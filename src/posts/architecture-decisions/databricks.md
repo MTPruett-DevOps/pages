@@ -4,7 +4,7 @@ We started with what felt like the right move: give each dev team their own Data
 
 But in reality, it turned into a mess.
 
-We're now looking at over **30 workspaces**, each with its own Unity Catalog configuration, permission model, diagnostic settings, and ACL sprawl. Just keeping track of who has access to what has become a job in itself.
+We're now looking at over **30 workspaces**, each with its own permission model, diagnostic settings, and ACL sprawl. Just keeping track of who has access to what has become a job in itself.
 
 Even our Databricks account manager called it out. Their other largest client? Just 10 workspaces total.
 
