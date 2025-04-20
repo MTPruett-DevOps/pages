@@ -1,8 +1,11 @@
+// vite.config.mjs
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import md from "vite-plugin-md";
 
 export default defineConfig({
-  base: "/pages/",
-  plugins: [react(), md()]
+  plugins: [react()],
+  server: {
+    port: 5173,
+  },
+  assetsInclude: ["**/*.md"],
 });

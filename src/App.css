@@ -54,7 +54,6 @@
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* Prevent accidental taps while fading in */
 .content-wrapper.fade-in-down {
   pointer-events: none;
   animation: fadeInDown 0.6s ease forwards;
@@ -151,7 +150,23 @@
   text-decoration: none;
 }
 
-/* Only apply hover effects on devices that support hover */
+/* ✅ Mermaid chart box style fix */
+.markdown .mermaid {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  overflow-x: auto;
+  color: #000 !important;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.markdown .mermaid * {
+  color: #000 !important;
+  font-family: inherit !important;
+}
+
+/* Desktop hover effects */
 @media (hover: hover) and (pointer: fine) {
   .nav-button:hover:not(.active-post-button) {
     background-color: #d1d5db;

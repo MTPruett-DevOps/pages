@@ -1,8 +1,49 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
+import mermaid from "mermaid";
 import { marked } from "marked";
+import parse from "html-react-parser";
+import "./App.css";
 import About from "./about";
 
+// Mermaid config
+marked.setOptions({ gfm: true, breaks: true });
+
+marked.use({
+  extensions: [
+    {
+      name: "mermaid",
+      level: "block",
+      start(src) {
+        return src.match(/```mermaid/)?.index;
+      },
+      tokenizer(src) {
+        const match = /^```mermaid\n([\s\S]+?)```/.exec(src);
+        if (match) {
+          return {
+            type: "mermaid",
+            raw: match[0],
+            text: match[1].trim(),
+            tokens: [],
+          };
+        }
+      },
+      renderer(token) {
+        const themeBlock = `%%{init: {
+  "theme": "default",
+  "themeVariables": {
+    "fontFamily": "courier",
+    "textColor": "#000",
+    "primaryTextColor": "#000",
+    "nodeTextColor": "#000"
+  }
+}}%%`;
+        return `<div class="mermaid">${themeBlock}\n${token.text}</div>`;
+      },
+    },
+  ],
+});
+
+// Load markdown posts
 const allPostFiles = import.meta.glob("./posts/**/*.md", {
   query: "?raw",
   import: "default",
@@ -11,14 +52,20 @@ const allPostFiles = import.meta.glob("./posts/**/*.md", {
 const folderToPosts = {};
 Object.keys(allPostFiles).forEach((path) => {
   const parts = path.split("/");
-  const folder = parts[2];
+  const folder = parts.slice(2, -1).join("/");
   if (!folderToPosts[folder]) folderToPosts[folder] = [];
   folderToPosts[folder].push(path);
 });
 
 function formatPostTitle(path) {
-  const file = path.split("/").pop().replace(/\.md$/, "");
-  return file.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return path.split("/").pop().replace(/\.md$/, "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function formatFolderTitle(folder) {
+  return folder
+    .split("/")
+    .map((s) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()))
+    .join(" / ");
 }
 
 export default function App() {
@@ -36,11 +83,10 @@ export default function App() {
     setActivePostPath("");
     setPostContent("");
     setAboutCollapsed(true);
-    setAboutCollapsed(true);
     setTimeout(() => {
       setDocsMode(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 100); // Matches or exceeds the fade-out duration
+    }, 100);
   };
 
   const returnToAbout = () => {
@@ -72,30 +118,72 @@ export default function App() {
   };
 
   const loadPost = async (path) => {
-    if (path === activePostPath) return;
-    const raw = await allPostFiles[path]();
-    const html = marked.parse(raw);
-    setActivePostPath(path);
-    setPostContent(html);
-    setPostVisible(false);
-    setTimeout(() => setPostVisible(true), 0);
+    console.log("🟡 Trying to load post:", path);
+    try {
+      const loader = allPostFiles[path];
+      if (!loader) {
+        console.error("❌ Could not find loader for path:", path);
+        return;
+      }
+
+      const raw = await loader();
+      console.log("📄 Raw markdown loaded:", raw.slice(0, 100));
+
+      const html = marked.parse(raw);
+      console.log("✅ Markdown parsed");
+
+      setActivePostPath(path);
+      setPostContent(html);
+      setPostVisible(true);
+
+      // 💣 Inject fix after rendering Mermaid
+      setTimeout(() => {
+        try {
+          mermaid.initialize({ startOnLoad: false });
+          mermaid.init(undefined, ".mermaid");
+
+          requestAnimationFrame(() => {
+            const svgs = document.querySelectorAll(".mermaid svg");
+            svgs.forEach((svg) => {
+              const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+              style.textContent = `
+                text,
+                .label,
+                foreignObject div,
+                foreignObject span {
+                  fill: #000 !important;
+                  color: #000 !important;
+                  font-weight: 600 !important;
+                }
+              `;
+              svg.insertBefore(style, svg.firstChild);
+            });
+
+            console.log("✅ Mermaid injected with inline SVG styles");
+          });
+        } catch (err) {
+          console.error("❌ Mermaid render error:", err);
+        }
+      }, 100);
+    } catch (err) {
+      console.error("❌ loadPost failed:", err);
+    }
   };
+
+  useEffect(() => {
+    const all = Object.values(folderToPosts).flat();
+    if (all.length > 0) loadPost(all[0]);
+  }, []);
 
   return (
     <div className="container">
       <div className="header">
         <button
           className="avatar-button"
-          onClick={() =>
-            window.open("https://github.com/MTPruett-DevOps/help", "_blank", "noopener,noreferrer")
-          }
+          onClick={() => window.open("https://github.com/MTPruett-DevOps/help", "_blank")}
           aria-label="GitHub"
         >
-          <img
-            src="https://github.com/pruettmt.png"
-            alt="MT Pruett"
-            className="avatar"
-          />
+          <img src="https://github.com/pruettmt.png" alt="MT Pruett" className="avatar" />
         </button>
         <h1>
           <a
@@ -125,7 +213,7 @@ export default function App() {
             {Object.keys(folderToPosts).map((folder) => (
               <div key={folder} className="folder-block">
                 <button className="nav-button" onClick={() => toggleFolder(folder)}>
-                  {folder.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                  {formatFolderTitle(folder)}
                 </button>
               </div>
             ))}
@@ -139,9 +227,7 @@ export default function App() {
             return (
               <div
                 key={folder}
-                className={`sub-buttons-line-wrapper ${
-                  isClosing ? "fade-out" : "fade-in-only"
-                }`}
+                className={`sub-buttons-line-wrapper ${isClosing ? "fade-out" : "fade-in-only"}`}
               >
                 <div className="sub-buttons-line">
                   {folderToPosts[folder].map((path) => (
@@ -161,12 +247,7 @@ export default function App() {
           })}
 
           <div className={`post-wrapper ${postVisible ? "fade-in-down" : ""}`}>
-            {postContent && (
-              <div
-                className="markdown"
-                dangerouslySetInnerHTML={{ __html: postContent }}
-              />
-            )}
+            {postContent && <div className="markdown">{parse(postContent)}</div>}
           </div>
         </div>
       )}
