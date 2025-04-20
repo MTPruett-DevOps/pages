@@ -6,7 +6,7 @@ But in reality, it turned into a mess.
 
 We're now looking at over **30 workspaces**, each with its own permission model, diagnostic settings, and ACL sprawl. Just keeping track of who has access to what has become a job in itself.
 
-Even our Databricks account manager called it out. Their other largest client? Just 10 workspaces total.
+Even our Databricks account manager called it out. Their other client? Just 10 workspaces total.
 
 This isn’t sustainable — not with a lean DevOps team.
 
