@@ -31,7 +31,7 @@ export default function Header() {
           {selected === "" && (
             <option value="" hidden>Find Me</option> 
           )}
-          <option value="https://github.com/MTPruett-DevOps">GitHub</option>
+          <option value="https://github.com/MTPruett-DevOps/Help">GitHub</option>
           <option value="https://www.linkedin.com/in/mtpruett/">LinkedIn</option>
         </select>
       </div>
