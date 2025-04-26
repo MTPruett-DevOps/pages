@@ -4,6 +4,7 @@ import { marked } from "marked";
 import parse from "html-react-parser";
 import "./App.css";
 import About from "./about";
+import Buttons from "./buttons"; // <<< NEW import
 
 // Mermaid config
 marked.setOptions({ gfm: true, breaks: true });
@@ -61,13 +62,6 @@ function formatPostTitle(path) {
   return path.split("/").pop().replace(/\.md$/, "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function formatFolderTitle(folder) {
-  return folder
-    .split("/")
-    .map((s) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()))
-    .join(" / ");
-}
-
 export default function App() {
   const [docsMode, setDocsMode] = useState(false);
   const [aboutCollapsed, setAboutCollapsed] = useState(false);
@@ -118,52 +112,22 @@ export default function App() {
   };
 
   const loadPost = async (path) => {
-    console.log("🟡 Trying to load post:", path);
     try {
       const loader = allPostFiles[path];
-      if (!loader) {
-        console.error("❌ Could not find loader for path:", path);
-        return;
-      }
+      if (!loader) return;
 
       const raw = await loader();
-      console.log("📄 Raw markdown loaded:", raw.slice(0, 100));
-
       const html = marked.parse(raw);
-      console.log("✅ Markdown parsed");
 
       setActivePostPath(path);
       setPostContent(html);
       setPostVisible(true);
 
-      // 💣 Inject fix after rendering Mermaid
       setTimeout(() => {
         try {
           mermaid.initialize({ startOnLoad: false });
           mermaid.init(undefined, ".mermaid");
-
-          requestAnimationFrame(() => {
-            const svgs = document.querySelectorAll(".mermaid svg");
-            svgs.forEach((svg) => {
-              const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
-              style.textContent = `
-                text,
-                .label,
-                foreignObject div,
-                foreignObject span {
-                  fill: #000 !important;
-                  color: #000 !important;
-                  font-weight: 600 !important;
-                }
-              `;
-              svg.insertBefore(style, svg.firstChild);
-            });
-
-            console.log("✅ Mermaid injected with inline SVG styles");
-          });
-        } catch (err) {
-          console.error("❌ Mermaid render error:", err);
-        }
+        } catch {}
       }, 100);
     } catch (err) {
       console.error("❌ loadPost failed:", err);
@@ -197,6 +161,20 @@ export default function App() {
         </h1>
       </div>
 
+      {/* ✅ Unified Buttons Section */}
+      <Buttons
+        docsMode={docsMode}
+        aboutCollapsed={aboutCollapsed}
+        returnToAbout={returnToAbout}
+        transitionToDocs={transitionToDocs}
+        openFolders={openFolders}
+        toggleFolder={toggleFolder}
+        folderToPosts={folderToPosts}
+        activePostPath={activePostPath}
+        loadPost={loadPost}
+      />
+
+      {/* About or Docs Content */}
       {!docsMode && (
         <div className={`about-wrapper ${aboutCollapsed ? "fade-out-down" : "fade-in-down"}`}>
           <About onSkip={transitionToDocs} />
@@ -205,47 +183,6 @@ export default function App() {
 
       {docsMode && (
         <div className={`content-wrapper ${fadingOut ? "fade-out-down" : "fade-in-down visible"}`}>
-          <div className="main-buttons">
-            <div className="about-button-wrapper">
-              <button className="nav-button" onClick={returnToAbout}>About</button>
-            </div>
-
-            {Object.keys(folderToPosts).map((folder) => (
-              <div key={folder} className="folder-block">
-                <button className="nav-button" onClick={() => toggleFolder(folder)}>
-                  {formatFolderTitle(folder)}
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {Object.keys(folderToPosts).map((folder) => {
-            const isOpen = openFolders.includes(folder);
-            const isClosing = closingFolders.includes(folder);
-            if (!isOpen && !isClosing) return null;
-
-            return (
-              <div
-                key={folder}
-                className={`sub-buttons-line-wrapper ${isClosing ? "fade-out" : "fade-in-only"}`}
-              >
-                <div className="sub-buttons-line">
-                  {folderToPosts[folder].map((path) => (
-                    <button
-                      key={path}
-                      className={`nav-button sub-post-button ${
-                        activePostPath === path ? "active-post-button" : ""
-                      }`}
-                      onClick={() => loadPost(path)}
-                    >
-                      {formatPostTitle(path)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-
           <div className={`post-wrapper ${postVisible ? "fade-in-down" : ""}`}>
             {postContent && <div className="markdown">{parse(postContent)}</div>}
           </div>
