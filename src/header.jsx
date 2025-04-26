@@ -1,25 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import "./index.css";
 
 export default function Header() {
   return (
     <div className="header">
       <button
         className="avatar-button"
-        onClick={() =>
-          window.open("https://github.com/MTPruett-DevOps/help", "_blank", "noopener,noreferrer")
-        }
-        aria-label="Open GitHub repository"
+        onClick={() => window.open("https://github.com/MTPruett-DevOps/help", "_blank")}
+        aria-label="GitHub"
       >
-        <img
-          src="https://github.com/pruettmt.png"
-          alt="MT Pruett GitHub Profile"
-          className="avatar"
-        />
+        <img src="https://github.com/pruettmt.png" alt="MT Pruett" className="avatar" />
       </button>
       <h1>
-        <Link to="/" className="name-link">MT Pruett</Link>
+        <a
+          className="name-link"
+          href="https://www.linkedin.com/in/mtpruett/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          MT Pruett
+        </a>
       </h1>
     </div>
   );

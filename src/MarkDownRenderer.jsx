@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import MermaidChart from "./Mermaid";
+import MermaidChart from "./mermaid";
 
 function CodeBlock({ className, children }) {
   const isMermaid = className === "language-mermaid";

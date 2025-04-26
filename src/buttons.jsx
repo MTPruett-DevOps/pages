@@ -22,7 +22,7 @@ export default function Buttons({
   loadPost,
 }) {
   const anyFolderOpen = openFolders.length > 0;
-  const openFolder = openFolders[0]; // Assuming you only allow one open at a time.
+  const openFolder = openFolders[0];
 
   if (!docsMode) {
     return (
@@ -65,9 +65,7 @@ export default function Buttons({
               {folderToPosts[openFolder].map((path) => (
                 <button
                   key={path}
-                  className={`nav-button sub-post-button ${
-                    activePostPath === path ? "active-post-button" : ""
-                  }`}
+                  className={`nav-button sub-post-button ${activePostPath === path ? "active-post-button" : ""}`}
                   onClick={() => loadPost(path)}
                 >
                   {formatPostTitle(path)}
