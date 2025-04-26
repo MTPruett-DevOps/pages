@@ -1,3 +1,4 @@
+import "./buttons.css"; // ✅ NEW import
 import React from "react";
 
 function formatPostTitle(path) {
@@ -26,7 +27,7 @@ export default function Buttons({
 
   if (!docsMode) {
     return (
-      <div className="main-buttons">
+      <div className="doc-button-wrapper">
         <button className="nav-button" onClick={transitionToDocs}>
           Documentation
         </button>

@@ -4,7 +4,8 @@ import { marked } from "marked";
 import parse from "html-react-parser";
 import "./App.css";
 import About from "./about";
-import Buttons from "./buttons"; // <<< NEW import
+import Buttons from "./buttons";
+import Header from "./header"; // ✅ New import
 
 // Mermaid config
 marked.setOptions({ gfm: true, breaks: true });
@@ -30,14 +31,14 @@ marked.use({
       },
       renderer(token) {
         const themeBlock = `%%{init: {
-  "theme": "default",
-  "themeVariables": {
-    "fontFamily": "courier",
-    "textColor": "#000",
-    "primaryTextColor": "#000",
-    "nodeTextColor": "#000"
-  }
-}}%%`;
+          "theme": "default",
+          "themeVariables": {
+            "fontFamily": "courier",
+            "textColor": "#000",
+            "primaryTextColor": "#000",
+            "nodeTextColor": "#000"
+          }
+        }}%%`;
         return `<div class="mermaid">${themeBlock}\n${token.text}</div>`;
       },
     },
@@ -65,7 +66,7 @@ function formatPostTitle(path) {
 export default function App() {
   const [docsMode, setDocsMode] = useState(() => {
     return localStorage.getItem('lastOpenedPost') ? true : false;
-  });  
+  });
   const [aboutCollapsed, setAboutCollapsed] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [openFolders, setOpenFolders] = useState([]);
@@ -86,19 +87,16 @@ export default function App() {
   };
 
   const returnToAbout = () => {
-    localStorage.removeItem('lastOpenedPost'); // 🛠 clear saved post
-    
-    // Immediate transition out of Docs mode
+    localStorage.removeItem('lastOpenedPost');
     setDocsMode(false);
     setPostContent("");
     setPostVisible(false);
     setActivePostPath("");
     setOpenFolders([]);
     setAboutCollapsed(false);
-  
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
- 
+
   const toggleFolder = (folder) => {
     const isOpen = openFolders.includes(folder);
     if (isOpen) {
@@ -116,21 +114,19 @@ export default function App() {
     try {
       const loader = allPostFiles[path];
       if (!loader) return;
-  
-      const raw = await loader();            // Load raw markdown
-      const html = marked.parse(raw);        // Parse markdown to HTML
+
+      const raw = await loader();
+      const html = marked.parse(raw);
       setActivePostPath(path);
-      setPostContent(html);                  // Set parsed HTML
-  
+      setPostContent(html);
       localStorage.setItem('lastOpenedPost', path);
-  
-      // 🛠 Auto-open the folder the post belongs to
+
       const parts = path.split("/");
       const folder = parts.slice(2, -1).join("/");
       setOpenFolders([folder]);
-  
+
       setPostVisible(true);
-  
+
       setTimeout(() => {
         mermaid.initialize({ startOnLoad: false });
         mermaid.init(undefined, ".mermaid");
@@ -138,45 +134,22 @@ export default function App() {
     } catch (err) {
       console.error("Failed to load post:", err);
     }
-  };  
+  };
 
   useEffect(() => {
     const lastPost = localStorage.getItem('lastOpenedPost');
     const allPosts = Object.values(folderToPosts).flat();
-  
+
     if (lastPost && allPosts.includes(lastPost)) {
-      // If we find the last post exactly, load it
       loadPost(lastPost);
     } else if (allPosts.length > 0) {
-      // Otherwise load the first post
       loadPost(allPosts[0]);
     }
-  }, []);  
-  
+  }, []);
 
   return (
     <div className="container">
-      <div className="header">
-        <button
-          className="avatar-button"
-          onClick={() => window.open("https://github.com/MTPruett-DevOps/help", "_blank")}
-          aria-label="GitHub"
-        >
-          <img src="https://github.com/pruettmt.png" alt="MT Pruett" className="avatar" />
-        </button>
-        <h1>
-          <a
-            className="name-link"
-            href="https://www.linkedin.com/in/mtpruett/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            MT Pruett
-          </a>
-        </h1>
-      </div>
-
-      {/* ✅ Unified Buttons Section */}
+      <Header />
       <Buttons
         docsMode={docsMode}
         aboutCollapsed={aboutCollapsed}
@@ -189,7 +162,6 @@ export default function App() {
         loadPost={loadPost}
       />
 
-      {/* About or Docs Content */}
       {!docsMode && (
         <div className={`about-wrapper ${aboutCollapsed ? "fade-out-down" : "fade-in-down"}`}>
           <About onSkip={transitionToDocs} />

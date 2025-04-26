@@ -6,49 +6,6 @@
   text-align: left;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  justify-content: center;
-}
-
-.avatar-button {
-  all: unset;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 0;
-  border-radius: 50%;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  margin-right: 1rem;
-}
-
-.avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 1px solid #4b5563;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  object-fit: cover;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-}
-
-.name-link {
-  all: unset;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 2rem;
-  color: inherit;
-  text-decoration: none;
-  transition: transform 0.2s ease;
-}
-
 .about-wrapper,
 .content-wrapper {
   transition: opacity 0.4s ease, transform 0.4s ease;
@@ -111,43 +68,19 @@
   }
 }
 
-.main-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 2rem;
+.markdown {
+  font-size: 15px;
+  color: #d1d5db;
+  line-height: 1.75;
+  background-color: #0f172a;
+  padding: 1rem;
+  border-radius: 10px;
+  overflow-x: auto;
 }
 
-.nav-button {
-  padding: 0.5rem 1.25rem;
-  border-radius: 999px;
-  font: inherit;
-  margin: 0.25rem;
-  transition: all 0.3s ease;
-  background-color: #d1d5db;
-  border: 1px solid #ccc;
-  font-weight: 600;
-  color: #0f172a;
-  cursor: pointer;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.active-post-button {
-  background-color: #007acc;
-  color: white;
-  border-color: #007acc;
-}
-
-.nav-button:focus,
-.nav-button:focus-visible,
-.nav-button:active {
-  outline: none;
-  box-shadow: none;
-  text-decoration: none;
+.markdown pre {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* ✅ Mermaid chart box style fix */
@@ -166,78 +99,6 @@
   font-family: inherit !important;
 }
 
-/* Desktop hover effects */
-@media (hover: hover) and (pointer: fine) {
-  .nav-button:hover:not(.active-post-button) {
-    background-color: #d1d5db;
-    color: #0f172a;
-    border-color: #ccc;
-    transform: scale(1.03);
-  }
-
-  .name-link:hover {
-    transform: scale(1.05);
-  }
-
-  .avatar:hover {
-    transform: scale(1.1);
-  }
-
-  .skip-doc-link:hover {
-    transform: scale(1.05);
-  }
-}
-
-.sub-buttons-line-wrapper {
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.sub-buttons-line {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0 1rem;
-}
-
-.post-wrapper {
-  margin-top: 2rem;
-  transition: opacity 0.4s ease;
-}
-
-.markdown {
-  font-size: 15px;
-  color: #d1d5db;
-  line-height: 1.75;
-  background-color: #0f172a;
-  padding: 1rem;
-  border-radius: 10px;
-  overflow-x: auto;
-}
-
-.markdown pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-@media (max-width: 600px) {
-  .main-buttons,
-  .sub-buttons-line {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .nav-button {
-    width: 100%;
-    max-width: 280px;
-  }
-
-  .sub-buttons-line {
-    padding: 0;
-  }
-}
-
 .fade-in-up {
   animation: fadeInUp 0.6s ease forwards;
   opacity: 0;
@@ -252,11 +113,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.folder-with-posts-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1rem;
 }

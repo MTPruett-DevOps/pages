@@ -1,0 +1,97 @@
+.main-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.doc-button-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.nav-button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font: inherit;
+  margin: 0.25rem;
+  transition: all 0.3s ease;
+  background-color: #d1d5db;
+  border: 1px solid #ccc;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.active-post-button {
+  background-color: #007acc;
+  color: white;
+  border-color: #007acc;
+}
+
+.nav-button:focus,
+.nav-button:focus-visible,
+.nav-button:active {
+  outline: none;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-button:hover:not(.active-post-button) {
+    background-color: #d1d5db;
+    color: #0f172a;
+    border-color: #ccc;
+    transform: scale(1.03);
+  }
+
+  .skip-doc-link:hover {
+    transform: scale(1.05);
+  }
+}
+
+.sub-buttons-line-wrapper {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.sub-buttons-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
+
+.folder-with-posts-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  .main-buttons,
+  .sub-buttons-line {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav-button {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .sub-buttons-line {
+    padding: 0;
+  }
+}
