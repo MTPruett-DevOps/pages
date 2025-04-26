@@ -85,37 +85,7 @@ button:focus {
   box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.4);
 }
 
-/* Avatar */
-.avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 1px solid #4b5563;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  object-fit: cover;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-}
-
-.avatar:hover {
-  transform: scale(1.1);
-}
-
 /* Links styled like buttons/text */
-.name-link {
-  all: unset;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 2rem;
-}
-
-.name-link:hover {
-  text-decoration: none !important;
-}
-.name-link:focus {
-  text-decoration: underline;
-}
-
 a.skip-doc-link {
   color: #d1d5db !important;
   text-decoration: underline !important;

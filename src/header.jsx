@@ -1,27 +1,40 @@
-// src/header.jsx
 import './header.css';
-import React from "react";
+import React, { useState } from "react";
 
 export default function Header() {
+  const [selected, setSelected] = useState("");
+
+  const handleDropdownChange = (event) => {
+    const value = event.target.value;
+    if (value) {
+      window.open(value, "_blank");
+      setSelected(""); // ✅ Reset dropdown back to "Find Me" after opening link
+    }
+  };
+
   return (
     <div className="header">
-      <button
-        className="avatar-button"
-        onClick={() => window.open("https://github.com/MTPruett-DevOps/help", "_blank")}
-        aria-label="GitHub"
-      >
+      <div className="avatar-wrapper">
         <img src="https://github.com/pruettmt.png" alt="MT Pruett" className="avatar" />
-      </button>
-      <h1>
-        <a
-          className="name-link"
-          href="https://www.linkedin.com/in/mtpruett/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+      </div>
+
+      <div className="name-block">
+        <h1 className="name-text">
           MT Pruett
-        </a>
-      </h1>
+        </h1>
+
+        <select
+          className="header-dropdown"
+          onChange={handleDropdownChange}
+          value={selected}
+        >
+          {selected === "" && (
+            <option value="" hidden>Find Me</option> 
+          )}
+          <option value="https://github.com/MTPruett-DevOps">GitHub</option>
+          <option value="https://www.linkedin.com/in/mtpruett/">LinkedIn</option>
+        </select>
+      </div>
     </div>
   );
 }
