@@ -1,108 +1,93 @@
-# Too Many Workspaces: Why We're Centralizing Databricks
+# Solving Databricks Access at Scale: No Consolidation Required
 
-We started with what felt like the right move: give each dev team their own Databricks stack — DEV, QA, UAT, and PROD. Isolated environments. Clean separation. Minimal cross-team interference.
+We originally considered consolidating Databricks workspaces — thinking a shared DEV, QA, UAT, and PROD stack would reduce overhead. But after digging in, we realized that **workspace isolation still provides value** for many of our teams.
 
-But in reality, it turned into a mess.
+So instead of changing the architecture, we're improving how it's managed.
 
-We're now looking at over **30 workspaces**, each with its own permission model, diagnostic settings, and ACL sprawl. Just keeping track of who has access to what has become a job in itself.
+---
 
-Even our Databricks account manager called it out. Their other client? Just 10 workspaces total.
+## The Problem
 
-This isn’t sustainable — not with a lean DevOps team.
+With dozens of Databricks workspaces across teams and environments, the real pain hasn’t been the number of stacks — it's been **managing identity and permissions** consistently.
+
+Each workspace has its own ACLs, user groups, and manual assignment processes. There’s no centralized control, and onboarding new users means touching every environment manually.
+
+That doesn’t scale.
 
 ---
 
 ## The New Plan
 
-We're consolidating to **a company-wide stack**: one workspace each for **DEV, QA, UAT, and PROD**.
+We’re rolling out **automatic identity management**, using Terraform and Azure Entra ID (formerly Azure AD) as the source of truth.
 
-Instead of isolating by environment, we’re separating by **data objects and permissions** inside a shared workspace — which, if you're familiar with Databricks, makes more sense. A workspace is just a container. It’s the permissions and structuring inside it that really determine access.
+### ✅ What We're Doing
 
-We're also rolling out **Databricks Asset Bundles (DAB)** across all teams. With DAB, teams can:
+- Keeping existing workspace-per-team architecture
+- Managing permissions centrally through **Entra ID groups**
+- Using Terraform to assign those groups in Databricks (via `databricks_group` + `databricks_permission_assignment`)
+- Supporting both admin and user roles per environment
 
-- Develop modular pipelines and notebooks
-- Version and promote them cleanly through environments
-- Deploy to the shared workspace without stepping on other teams
-
----
-
-## How Teams Will Work
-
-- **Personal Dev Workspaces (Ephemeral):**  
-  Developers will spin up their own workspaces using Terraform in the morning. These are short-lived environments tied to feature branches.
-
-- **Team Repo Branching:**  
-  Developers branch from the main repo, deploy to their personal environment, and build/test in isolation.
-
-- **Merge and Deploy:**  
-  Once development is complete, changes are merged back into `main` or `hotfix`, and deployed to the central stack.
+This allows us to **delegate access control to Entra ID**, while ensuring it's reflected consistently across all Databricks workspaces — without manual setup.
 
 ---
 
-## Architecture: The New Flow
+## 🔐 What Is Automatic Identity Management — and Why It Matters
 
-```mermaid
-graph TD
-    %% Terraform Workspace Lifecycle
-    subgraph Terraform Workspace Lifecycle
-        TF_Create[Ephemeral TF Workspace - created daily]
-        TF_Destroy[TF Workspace Destroyed - nightly]
-        TF_Create --> TF_Destroy
-    end
+**Automatic identity management** lets you seamlessly use Microsoft Entra ID (formerly Azure AD) as the authoritative source for all identity in Azure Databricks — without needing to register or configure a separate enterprise application.
 
-    %% Git Branching Workflow
-    subgraph Git Workflow
-        Main[Main Branch]
-        Hotfix[Hotfix Branch]
-        PersonalBranch[Developer's Personal Branch]
+When enabled:
 
-        Main -->|Branch off| PersonalBranch
-        Hotfix -->|Branch off| PersonalBranch
-        PersonalBranch -->|Merge back| Main
-        PersonalBranch -->|Merge back| Hotfix
-    end
-
-    %% Development and Deployment
-    PersonalBranch -->|Deploy to| TF_Create
-
-    %% Deployment to Main Stack
-    Main -->|Deploy| MainStack[Main Databricks Stack]
-    Hotfix -->|Deploy| MainStack
-
-    %% Styling
-    classDef workspace fill:#99ccff,stroke:#333,stroke-width:1px;
-    classDef branch fill:#ffcc66,stroke:#333,stroke-width:1px;
-    classDef deploy fill:#ff9999,stroke:#333,stroke-width:1px;
-
-    class TF_Create,TF_Destroy workspace
-    class Main,Hotfix,PersonalBranch branch
-    class MainStack deploy
-```
+- You can directly **search and assign Entra ID users, groups, and service principals** inside your Databricks workspace.
+- **No manual SCIM syncs** or application provisioning required.
+- **Group membership is dynamic** — changes made in Entra ID (e.g. adding a user to a group) are automatically reflected in Databricks.
+- **Nested groups work**, allowing more scalable and flexible access models.
 
 ---
 
-## Why This Works Better
+### 🔁 Why This Replaces Our Current SCIM Setup
 
-- **Fewer things to manage:**  
-  Fewer workspaces = fewer moving parts = fewer headaches.
+Right now, we're using a **SCIM connector**, which requires:
 
-- **Cleaner access control:**  
-  One permission model. Enforced properly.
+- Manually assigning groups to the Databricks SCIM enterprise application in Azure
+- Waiting for Azure to sync those groups into the workspace
+- **No support for nested groups**, meaning we often duplicate group assignments or flatten group hierarchies manually
 
-- **DAB makes isolation inside a workspace real:**  
-  Bundles + good ACL hygiene = safe multi-team deployments.
+This doesn't scale, especially with many teams and complex access models.
 
-- **Fast local dev cycles:**  
-  Devs can still work independently, but we’re not managing 30+ different workspaces.
+With **automatic identity management**, that overhead goes away:
+
+✅ No app assignments or SCIM syncs  
+✅ Nested groups work out of the box  
+✅ Entra ID remains the source of truth  
+✅ Group changes are reflected automatically in Databricks
+
+---
+
+## Why This Works
+
+- **No change to team autonomy:**  
+  Teams keep their own workspaces and deployments.
+
+- **Centralized identity management:**  
+  All permission logic is driven by Entra ID.
+
+- **Infra-as-Code enforcement:**  
+  Terraform ensures access is applied consistently across all environments.
+
+- **Scales cleanly:**  
+  Adding a new team? Just create an Entra group and run a plan.
 
 ---
 
 ## The Tradeoffs
 
-No architecture decision is perfect, and we’re not pretending this is a silver bullet.
+- Still multiple workspaces to maintain — but worth it for team-level isolation.
+- Requires governance around Entra ID group structure and naming.
+- Teams need to follow group-based access patterns for Databricks.
 
-- Shared workspaces require tighter governance.
-- There’s more emphasis on permission boundaries within the workspace.
-- Teams need to learn and adopt DAB — and structure their repos accordingly.
+---
 
-But overall? This scales. The old model doesn’t.
+## Summary
+
+We’re not reducing workspaces — we’re reducing effort.  
+Automatic identity management gives us secure, scalable access control across all Databricks environments, without touching every workspace manually.

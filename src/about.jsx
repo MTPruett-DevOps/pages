@@ -25,9 +25,9 @@ export default function About({ setPage }) {
         Most of my day-to-day work is spent automating deployments, tightening CI/CD pipelines, managing Databricks environments (including Unity Catalog),
         and helping teams move faster without breaking things. If there's a way to script it, automate it, or monitor it... I'm on it.
       </p>
-
+      
       <p>
-        The cloud’s always changing — and sometimes (more than we'd like) it breaks. I decided to put this together to keep track of what I’m learning, what I’ve messed up, and what
+        The cloud’s always changing — and sometimes (more than we'd like) it breaks. I decided to put this together to keep track of what I’m learning, the problems I’ve hit, and what
         actually works. If it saves you some pain, that’s a win.
       </p>
 

@@ -5,47 +5,12 @@ import parse from "html-react-parser";
 import "./App.css";
 import About from "./about";
 import Buttons from "./buttons";
-import Header from "./header"; // ✅ New import
-
-// Mermaid config
-marked.setOptions({ gfm: true, breaks: true });
+import Header from "./header";
 
 marked.use({
-  extensions: [
-    {
-      name: "mermaid",
-      level: "block",
-      start(src) {
-        return src.match(/```mermaid/)?.index;
-      },
-      tokenizer(src) {
-        const match = /^```mermaid\n([\s\S]+?)```/.exec(src);
-        if (match) {
-          return {
-            type: "mermaid",
-            raw: match[0],
-            text: match[1].trim(),
-            tokens: [],
-          };
-        }
-      },
-      renderer(token) {
-        const themeBlock = `%%{init: {
-          "theme": "default",
-          "themeVariables": {
-            "fontFamily": "courier",
-            "textColor": "#000",
-            "primaryTextColor": "#000",
-            "nodeTextColor": "#000"
-          }
-        }}%%`;
-        return `<div class="mermaid">${themeBlock}\n${token.text}</div>`;
-      },
-    },
-  ],
+  breaks: true,
 });
 
-// Load markdown posts
 const allPostFiles = import.meta.glob("./posts/**/*.md", {
   query: "?raw",
   import: "default",
@@ -60,12 +25,17 @@ Object.keys(allPostFiles).forEach((path) => {
 });
 
 function formatPostTitle(path) {
-  return path.split("/").pop().replace(/\.md$/, "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return path
+    .split("/")
+    .pop()
+    .replace(/\.md$/, "")
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export default function App() {
   const [docsMode, setDocsMode] = useState(() => {
-    return localStorage.getItem('lastOpenedPost') ? true : false;
+    return sessionStorage.getItem("lastOpenedPost") ? true : false;
   });
   const [aboutCollapsed, setAboutCollapsed] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
@@ -87,7 +57,7 @@ export default function App() {
   };
 
   const returnToAbout = () => {
-    localStorage.removeItem('lastOpenedPost');
+    sessionStorage.removeItem("lastOpenedPost");
     setDocsMode(false);
     setPostContent("");
     setPostVisible(false);
@@ -119,7 +89,7 @@ export default function App() {
       const html = marked.parse(raw);
       setActivePostPath(path);
       setPostContent(html);
-      localStorage.setItem('lastOpenedPost', path);
+      sessionStorage.setItem("lastOpenedPost", path);
 
       const parts = path.split("/");
       const folder = parts.slice(2, -1).join("/");
@@ -137,15 +107,15 @@ export default function App() {
   };
 
   useEffect(() => {
-    const lastPost = localStorage.getItem('lastOpenedPost');
-    const allPosts = Object.values(folderToPosts).flat();
+  const lastPost = sessionStorage.getItem("lastOpenedPost");
+  const allPosts = Object.values(folderToPosts).flat();
 
-    if (lastPost && allPosts.includes(lastPost)) {
-      loadPost(lastPost);
-    } else if (allPosts.length > 0) {
-      loadPost(allPosts[0]);
-    }
-  }, []);
+  if (lastPost && allPosts.includes(lastPost)) {
+    loadPost(lastPost);
+  } else {
+    setDocsMode(false); // Start on About if no post was previously opened
+  }
+}, []);
 
   return (
     <div className="container">
