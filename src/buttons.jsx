@@ -1,8 +1,13 @@
-import "./buttons.css"; // ✅ NEW import
+import "./buttons.css";
 import React from "react";
 
 function formatPostTitle(path) {
-  return path.split("/").pop().replace(/\.md$/, "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return path
+    .split("/")
+    .pop()
+    .replace(/\.md$/, "")
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function formatFolderTitle(folder) {
@@ -66,7 +71,9 @@ export default function Buttons({
               {folderToPosts[openFolder].map((path) => (
                 <button
                   key={path}
-                  className={`nav-button sub-post-button ${activePostPath === path ? "active-post-button" : ""}`}
+                  className={`nav-button sub-post-button ${
+                    activePostPath === path ? "active-post-button" : ""
+                  }`}
                   onClick={() => loadPost(path)}
                 >
                   {formatPostTitle(path)}

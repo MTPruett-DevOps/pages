@@ -24,15 +24,6 @@ Object.keys(allPostFiles).forEach((path) => {
   folderToPosts[folder].push(path);
 });
 
-function formatPostTitle(path) {
-  return path
-    .split("/")
-    .pop()
-    .replace(/\.md$/, "")
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 export default function App() {
   const [docsMode, setDocsMode] = useState(() => {
     return sessionStorage.getItem("lastOpenedPost") ? true : false;
