@@ -13,7 +13,7 @@ This Terraform package provisions the following resources:
 
 This guide walks you through setting up standardized Azure resource tags and a complete Databricks environment using two Terraform projects:
 
-- `terraform-bmi-resource-consistency`
+- `terraform-resource-consistency`
 - `terraform-databricks`
 
 By the end, you'll have a reusable foundation for deploying consistent infrastructure with tagging, secure storage, Databricks compute, and Unity Catalog.

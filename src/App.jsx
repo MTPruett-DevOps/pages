@@ -1,15 +1,23 @@
+// src/App.jsx
 import React, { useState, useEffect } from "react";
 import mermaid from "mermaid";
-import { marked } from "marked";
 import parse from "html-react-parser";
 import "./App.css";
 import About from "./about";
 import Buttons from "./buttons";
 import Header from "./header";
+import { marked } from "marked";
+import { markedHighlight } from "marked-highlight";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark.css";
 
-marked.use({
-  breaks: true,
-});
+marked.use(markedHighlight({
+  langPrefix: "hljs language-",
+  highlight(code, lang) {
+    const language = hljs.getLanguage(lang) ? lang : "plaintext";
+    return hljs.highlight(code, { language }).value;
+  },
+}));
 
 const allPostFiles = import.meta.glob("./posts/**/*.md", {
   query: "?raw",
@@ -98,15 +106,15 @@ export default function App() {
   };
 
   useEffect(() => {
-  const lastPost = sessionStorage.getItem("lastOpenedPost");
-  const allPosts = Object.values(folderToPosts).flat();
+    const lastPost = sessionStorage.getItem("lastOpenedPost");
+    const allPosts = Object.values(folderToPosts).flat();
 
-  if (lastPost && allPosts.includes(lastPost)) {
-    loadPost(lastPost);
-  } else {
-    setDocsMode(false); // Start on About if no post was previously opened
-  }
-}, []);
+    if (lastPost && allPosts.includes(lastPost)) {
+      loadPost(lastPost);
+    } else {
+      setDocsMode(false);
+    }
+  }, []);
 
   return (
     <div className="container">

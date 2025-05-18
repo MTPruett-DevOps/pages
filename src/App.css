@@ -73,17 +73,28 @@
 /* Markdown content */
 .markdown {
   font-size: 15px;
-  color: #d1d5db;
   line-height: 1.75;
-  background-color: #0f172a;
   padding: 1rem;
   border-radius: 10px;
   overflow-x: auto;
 }
 
+.markdown p {
+  margin-bottom: 1rem;
+}
+
 .markdown pre {
-  white-space: pre-wrap;
-  word-break: break-word;
+  background-color: #1e1e1e;
+  padding: 1rem;
+  border-radius: 10px;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.markdown pre code.hljs {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-family: 'Fira Code', monospace;
 }
 
 /* ✅ Mermaid chart box style fix */
