@@ -20,13 +20,13 @@ Object.keys(allPostFiles).forEach((path) => {
 });
 
 export default function App() {
-  const [docsMode, setDocsMode] = useState(() => {
-    return sessionStorage.getItem("lastOpenedPost") ? true : false;
-  });
+  const [docsMode, setDocsMode] = useState(() =>
+    sessionStorage.getItem("lastOpenedPost") ? true : false
+  );
   const [aboutCollapsed, setAboutCollapsed] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [openFolders, setOpenFolders] = useState([]);
-  const [closingFolders, setClosingFolders] = useState([]);
+  const [closingFolders, setClosingFolders] = useState([]); // ✅ declared before usage
   const [postContent, setPostContent] = useState("");
   const [activePostPath, setActivePostPath] = useState("");
   const [postVisible, setPostVisible] = useState(false);
@@ -68,6 +68,15 @@ export default function App() {
 
   const loadPost = async (path) => {
     try {
+      if (activePostPath === path) {
+        // Toggle off if already selected
+        sessionStorage.removeItem("lastOpenedPost");
+        setPostContent("");
+        setPostVisible(false);
+        setActivePostPath("");
+        return;
+      }
+
       const loader = allPostFiles[path];
       if (!loader) return;
 
