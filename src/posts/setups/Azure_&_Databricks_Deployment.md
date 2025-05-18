@@ -36,7 +36,7 @@ Authentication is handled as follows:
 
 ## Step 1: Standardizing Tags and Naming Conventions
 
-This section explains the `terraform-bmi-resource-consistency` module and its integration with the `Azure/naming/azurerm` module.
+This section explains the `terraform-resource-consistency` module and its integration with the `Azure/naming/azurerm` module.
 
 ### 1. Standardized Tags
 
@@ -97,7 +97,7 @@ module "compact" {
 
 ```hcl
 module "tags" {
-  source = "git::https://github.com/your-org/terraform-bmi-resource-consistency.git"
+  source = "git::https://github.com/mt-devops/terraform-resource-consistency.git"
 
   ChangeRequestID  = "CHG12345"
   DepartmentNumber = "Dept01"
@@ -113,7 +113,7 @@ module "tags" {
 
 ```hcl
 module "naming" {
-  source  = "app.terraform.io/BMI-TF/resource-consistency/bmi"
+  source  = "app.terraform.io/mt-devops/resource-consistency/mt"
   version = "1.0.13"
 
   AssetName        = var.team_name

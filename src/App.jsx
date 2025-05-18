@@ -1,23 +1,10 @@
-// src/App.jsx
 import React, { useState, useEffect } from "react";
 import mermaid from "mermaid";
-import parse from "html-react-parser";
 import "./App.css";
 import About from "./about";
 import Buttons from "./buttons";
 import Header from "./header";
-import { marked } from "marked";
-import { markedHighlight } from "marked-highlight";
-import hljs from "highlight.js";
-import "highlight.js/styles/github-dark.css";
-
-marked.use(markedHighlight({
-  langPrefix: "hljs language-",
-  highlight(code, lang) {
-    const language = hljs.getLanguage(lang) ? lang : "plaintext";
-    return hljs.highlight(code, { language }).value;
-  },
-}));
+import MarkdownRenderer from "./MarkDownRenderer";
 
 const allPostFiles = import.meta.glob("./posts/**/*.md", {
   query: "?raw",
@@ -85,9 +72,8 @@ export default function App() {
       if (!loader) return;
 
       const raw = await loader();
-      const html = marked.parse(raw);
       setActivePostPath(path);
-      setPostContent(html);
+      setPostContent(raw);
       sessionStorage.setItem("lastOpenedPost", path);
 
       const parts = path.split("/");
@@ -140,7 +126,7 @@ export default function App() {
       {docsMode && (
         <div className={`content-wrapper ${fadingOut ? "fade-out-down" : "fade-in-down visible"}`}>
           <div className={`post-wrapper ${postVisible ? "fade-in-down" : ""}`}>
-            {postContent && <div className="markdown">{parse(postContent)}</div>}
+            {postContent && <MarkdownRenderer content={postContent} />}
           </div>
         </div>
       )}
