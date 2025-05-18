@@ -26,7 +26,6 @@ export default function App() {
   const [aboutCollapsed, setAboutCollapsed] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [openFolders, setOpenFolders] = useState([]);
-  const [closingFolders, setClosingFolders] = useState([]);
   const [postContent, setPostContent] = useState("");
   const [activePostPath, setActivePostPath] = useState("");
   const [postVisible, setPostVisible] = useState(false);
