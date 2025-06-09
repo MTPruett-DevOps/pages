@@ -165,7 +165,7 @@ resource "azurerm_databricks_workspace" "DatabricksWorkspace" {
 resource "azurerm_monitor_diagnostic_setting" "DatabricksMonitoring" {
   name                       = "...-diagnostics"
   target_resource_id         = azurerm_databricks_workspace.DatabricksWorkspace.id
-  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.BMILawsWorkspace.id
+  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.LawsWorkspace.id
   dynamic "enabled_log" {
     for_each = toset(local.enabled_logs)
     content {
