@@ -1,120 +1,52 @@
-# Terraform Tutorial: Azure & Databricks Deployment
+# 🚀 Full Azure Databricks Deployment with Terraform: Explained
 
-This Terraform package provisions the following resources:
+> 🔗 [databricks_uc_deploy project](https://github.com/MTPruett-DevOps/Help/tree/main/databricks_uc_deploy)
 
-- Azure Resource Group  
-- Azure Storage Account (Premium with hierarchical namespace)  
-- Azure Storage Container  
-- Databricks Workspace  
-- Databricks Cluster (shared)  
-- Databricks Permission Assignments (admin and user access)  
-- Unity Catalog Catalog with admin/user grants  
-- Optional: Group lookups and Metastore assignment  
-
-This guide walks you through setting up standardized Azure resource tags and a complete Databricks environment using two Terraform projects:
-
-- `terraform-resource-consistency`
-- `terraform-databricks`
-
-By the end, you'll have a reusable foundation for deploying consistent infrastructure with tagging, secure storage, Databricks compute, and Unity Catalog.
+This post walks through our complete Terraform setup for deploying a fully governed, production-grade Azure Databricks workspace. We use a GitHub-based module with Unity Catalog, Azure AD integration, secure access, and monitoring. We’ll explain every resource and configuration that leads up to the module call.
 
 ---
 
-## 🚀 Prerequisites
+## ⚙️ Terraform Cloud Setup
 
-- Terraform
-- Azure CLI authenticated (`az login`)  
-- Access to Azure and Databricks subscriptions  
-- Optional: Terraform Cloud/Enterprise (for remote state)
+```hcl
+terraform {
+  cloud {
+    hostname     = "app.terraform.io"
+    organization = "internal-platform"
+    workspaces {
+      name = "databricks-governed"
+    }
+  }
 
-Authentication is handled as follows:
+  required_providers {
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "3.4.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "4.32.0"
+    }
+    databricks = {
+      source  = "databricks/databricks"
+      version = "1.82.0"
+    }
+  }
+}
+```
 
-- **Azure**: via the `azurerm` provider and Azure CLI or Managed Identity  
-- **Databricks**: via the `databricks` provider using workspace host URLs and Azure authentication (via environment variables or explicit credentials)
+This block configures:
+- Terraform Cloud as the backend
+- Required providers for Azure AD, AzureRM, and Databricks
+- Pins versions to ensure consistent deployments
 
 ---
 
-## Step 1: Standardizing Tags and Naming Conventions
-
-This section explains the `terraform-resource-consistency` module and its integration with the `Azure/naming/azurerm` module.
-
-### 1. Standardized Tags
-
-Located in `outputs.tf`:
+## 📦 Resource Consistency Module
 
 ```hcl
-output "tagging" {
-  value = merge(
-    {
-      AssetName        = upper(var.AssetName),
-      DepartmentNumber = upper(var.DepartmentNumber),
-      DeployedBy       = upper(var.DeployedBy)
-    },
-    var.ChangeRequestID != "" ? { ChangeRequestID = upper(var.ChangeRequestID) } : {},
-    var.Project         != "" ? { Project         = upper(var.Project) } : {},
-    var.Environment     != "" ? { Environment     = upper(var.Environment) } : {},
-    var.Region          != "" ? { Region          = upper(var.Region) } : {}
-  )
-}
-```
-
-This ensures consistent capitalization and conditional inclusion of optional fields.
-
-### 2. Standard vs Compact Naming
-
-```hcl
-module "standard" {
-  source = "Azure/naming/azurerm"
-  suffix = [
-    join("-", compact([
-      lower(var.Environment),
-      lower(var.AssetName),
-      lower(var.Project)
-    ]))
-  ]
-}
-
-module "compact" {
-  source = "Azure/naming/azurerm"
-  suffix = [
-    join("", compact([
-      lower(var.Environment),
-      lower(var.AssetName),
-      lower(var.Project)
-    ]))
-  ]
-}
-```
-
-- `standard` uses hyphens (`-`) between components  
-- `compact` removes hyphens (required for resources like Storage Accounts)
-
-> ⚠️ Use `compact` naming for resources with strict constraints (e.g., lowercase only, no dashes)
-
-### 🧩 Real Usage Examples
-
-#### Example A
-
-```hcl
-module "tags" {
-  source = "git::https://github.com/mt-devops/terraform-resource-consistency.git"
-
-  ChangeRequestID  = "CHG12345"
-  DepartmentNumber = "Dept01"
-  Project          = "project-alpha"
-  AssetName        = "spark-data"
-  DeployedBy       = "terraform"
-  Environment      = "dev"
-  Region           = "eastus"
-}
-```
-
-#### Example B
-
-```hcl
-module "naming" {
-  source  = "app.terraform.io/mt-devops/resource-consistency/mt"
-  version = "1.0.13"
+module "resource_consistency" {
+  source  = "git::https://github.com/MTPruett-DevOps/Help//terraform-resource-consistency?ref=main"
 
   AssetName        = var.team_name
   DepartmentNumber = var.department_number
@@ -123,39 +55,75 @@ module "naming" {
 }
 ```
 
+This shared module:
+- Generates consistent naming conventions for all Azure resources
+- Tags resources with business context
+
+It returns outputs like:
+- `naming.standard.*` for long-form names
+- `naming.compact.*` for short Azure-compliant names
+- `tagging` map to apply across all resources
+
+> 🔗 [terraform-resource-consistency](https://github.com/MTPruett-DevOps/Help/tree/main/terraform-resource-consistency)
+
 ---
 
-## Step 2: Deploying Databricks with `terraform-databricks`
+## ✨ Providers and Data Sources
 
-This project provisions:
-
-- ADLS Gen2 storage account + container  
-- Databricks access connector and role assignment  
-- Databricks workspace  
-- Shared compute cluster  
-- Unity Catalog and access grants  
-
-### Root `main.tf` Resources
+We define two `azurerm` providers:
 
 ```hcl
-resource "azurerm_resource_group" "ResourceGroup" {
-  name     = module.naming.naming.standard.resource_group.name
-  location = var.location
+provider "azurerm" {
+  features {}
+}
+
+provider "azurerm" {
+  alias           = "infrastructure"
+  features        {}
+  subscription_id = "00000000-1111-2222-3333-444455556666"
 }
 ```
 
+Other data blocks include:
+- `azurerm_client_config`: retrieves current user info
+- `azuread_group`: resolves Entra ID groups
+- `azurerm_log_analytics_workspace`: grabs shared Log Analytics for monitoring
+
+---
+
+## 🛡 Core Azure Resources
+
+### Resource Group
+
+```hcl
+resource "azurerm_resource_group" "ResourceGroup" {
+  name     = module.resource_consistency.naming.standard.resource_group.name
+  location = var.location
+  tags     = module.resource_consistency.tagging
+}
+```
+
+### Key Vault
+
+- Created with strong access control
+- Permissions granted to the current user, AZSubscriptionOwners group, AdminGroups, and DeveloperGroups
+
+### Storage Account & Container
+
 ```hcl
 resource "azurerm_storage_account" "StorageAccount" {
-  name                     = "${module.naming.naming.compact.storage_account.name}02"
+  name                     = module.resource_consistency.naming.compact.storage_account.name
   resource_group_name      = azurerm_resource_group.ResourceGroup.name
   location                 = var.location
   account_tier             = "Premium"
   account_replication_type = "LRS"
-  tags                     = module.tagging.tagging
+  account_kind             = "BlockBlobStorage"
+  is_hns_enabled           = true
+  tags                     = module.resource_consistency.tagging
 }
 ```
 
-> **Note:** Premium is required for hierarchical namespace support.
+> **Note:** `is_hns_enabled` must be set to `true` for Unity Catalog. It can only be `true` when `account_tier` is `Standard` or when `account_tier` is `Premium` and `account_kind` is `BlockBlobStorage`.
 
 ```hcl
 resource "azurerm_storage_container" "StorageContainer" {
@@ -165,6 +133,8 @@ resource "azurerm_storage_container" "StorageContainer" {
 }
 ```
 
+### Access Connector
+
 ```hcl
 data "azurerm_databricks_access_connector" "AccessConnector" {
   name                = "bmi-bricks-${var.environment}-acccess-connector-01"
@@ -172,71 +142,102 @@ data "azurerm_databricks_access_connector" "AccessConnector" {
 }
 ```
 
-> Use this to reference external resources not managed in your state.
+- Enables secure access from Databricks to Azure resources
+- Assigned `Storage Blob Data Contributor` role
 
-```hcl
-resource "azurerm_role_assignment" "RoleAssignment" {
-  principal_id         = data.azurerm_databricks_access_connector.AccessConnector.identity[0].principal_id
-  role_definition_name = "Storage Blob Data Contributor"
-  scope                = azurerm_storage_account.StorageAccount.id
-}
-```
-
-> Required for Unity Catalog to read/write from storage.
+### Databricks Workspace
 
 ```hcl
 resource "azurerm_databricks_workspace" "DatabricksWorkspace" {
-  name                = module.naming.naming.standard.databricks_workspace.name
+  name                = module.resource_consistency.naming.standard.databricks_workspace.name
   location            = var.location
   resource_group_name = azurerm_resource_group.ResourceGroup.name
   sku                 = var.databricks_sku
-  tags                = module.tagging.tagging
+  tags                = module.resource_consistency.tagging
 }
 ```
 
 ---
 
-## 🔐 Provider Authentication
-
-### Azure
+## 🔍 Diagnostic Settings
 
 ```hcl
-provider "azurerm" {
-  features {}
+resource "azurerm_monitor_diagnostic_setting" "DatabricksMonitoring" {
+  name                       = "...-diagnostics"
+  target_resource_id         = azurerm_databricks_workspace.DatabricksWorkspace.id
+  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.BMILawsWorkspace.id
+  dynamic "enabled_log" {
+    for_each = toset(local.enabled_logs)
+    content {
+      category = enabled_log.value
+    }
+  }
 }
-```
-
-### Databricks
-
-```hcl
-provider "databricks" {
-  alias = "workspace"
-  host  = azurerm_databricks_workspace.DatabricksWorkspace.workspace_url
-  azure_workspace_resource_id = azurerm_databricks_workspace.DatabricksWorkspace.id
-}
-```
-
-These values can be provided via environment variables:
-
-- `ARM_CLIENT_ID`  
-- `ARM_CLIENT_SECRET`  
-- `ARM_SUBSCRIPTION_ID`  
-- `ARM_TENANT_ID`  
-
-Or explicitly in the provider block:
-
-```hcl
-azure_client_id       = var.azure_client_id
-azure_client_secret   = var.azure_client_secret
-azure_tenant_id       = var.azure_tenant_id
-azure_subscription_id = var.azure_subscription_id
 ```
 
 ---
 
-## ✅ Summary
+## 🛠️ Main Module: Databricks + Unity Catalog
 
-- Tags and names are standardized across all modules  
-- Storage, access, and workspace provisioning is fully automated  
-- Unity Catalog is secured and governed with group-based access  
-- Built to be reusable across multiple environments and teams  
+```hcl
+module "Databricks" {
+  source = "git::https://github.com/MTPruett-DevOps/Help//databricks_uc_module?ref=main"
+
+  asset_name     = var.team_name
+  account_id     = var.account_id
+  metastore_id   = var.metastore_id
+  environment    = var.environment
+
+  jdbc_database  = var.eidSqlServerDatabaseName
+  jdbc_host_name = var.eidSqlServerHostName
+  jdbc_port      = var.eidSqlServerPort
+  jdbc_username  = var.eidSqlServerUsername
+  jdbc_password  = var.eidSqlServerPassword
+
+  admin_groups   = var.admin_groups
+  user_groups    = var.user_groups
+
+  resource_group = azurerm_resource_group.ResourceGroup.name
+
+  databricks_workspace = {
+    name        = azurerm_databricks_workspace.DatabricksWorkspace.name
+    id          = azurerm_databricks_workspace.DatabricksWorkspace.workspace_id
+    resource_id = azurerm_databricks_workspace.DatabricksWorkspace.id
+    url         = azurerm_databricks_workspace.DatabricksWorkspace.workspace_url
+  }
+
+  storage = {
+    account_name   = azurerm_storage_account.StorageAccount.name
+    container_name = azurerm_storage_container.StorageContainer.name
+  }
+
+  key_vault = {
+    name = azurerm_key_vault.KeyVault.name
+    id   = azurerm_key_vault.KeyVault.id
+    uri  = azurerm_key_vault.KeyVault.vault_uri
+  }
+
+  access_connector = data.azurerm_databricks_access_connector.AccessConnector.name
+}
+```
+
+### ✅ Module Responsibilities
+
+- Attaches the workspace to a Unity Catalog metastore
+- Configures JDBC federation for SQL Server
+- Assigns Azure AD groups via **Automatic Identity Management**
+- Registers external locations backed by ADLS
+- Creates secret scopes using Azure Key Vault
+
+---
+
+## 📄 Summary
+
+This deployment pattern ensures:
+
+- Consistent, secure Azure resource naming and tagging
+- Full Databricks integration with Unity Catalog and Key Vault
+- Fine-grained role and storage access control
+- Scalable diagnostics and observability
+
+By modularizing all components, we simplify onboarding, improve compliance, and accelerate delivery across teams.
