@@ -188,11 +188,11 @@ module "Databricks" {
   metastore_id   = var.metastore_id
   environment    = var.environment
 
-  jdbc_database  = var.eidSqlServerDatabaseName
-  jdbc_host_name = var.eidSqlServerHostName
-  jdbc_port      = var.eidSqlServerPort
-  jdbc_username  = var.eidSqlServerUsername
-  jdbc_password  = var.eidSqlServerPassword
+  jdbc_database  = var.SqlServerDatabaseName
+  jdbc_host_name = var.SqlServerHostName
+  jdbc_port      = var.SqlServerPort
+  jdbc_username  = var.SqlServerUsername
+  jdbc_password  = var.SqlServerPassword
 
   admin_groups   = var.admin_groups
   user_groups    = var.user_groups
