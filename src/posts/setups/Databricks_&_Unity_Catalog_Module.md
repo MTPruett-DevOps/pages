@@ -40,7 +40,7 @@ provider "databricks" {
   alias  = "account"
   host   = "https://accounts.azuredatabricks.net"
   account_id = var.account_id
-  azure_workspace_resource_id = var.databricks_workspace.name
+  azure_workspace_resource_id = var.databricks_workspace.id
 }
 ```
 
