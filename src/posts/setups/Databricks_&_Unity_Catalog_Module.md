@@ -147,7 +147,7 @@ After deployment, the module provides:
 ## 🧠 Lessons Learned
 
 - **Separation of concerns matters.** Splitting logic into `account`, `workspace`, and `unity_catalog` lets us test and maintain each piece independently.
-- **Provider aliasing is essential.** Without scoped providers, managing cross-domain Databricks resources would be error-prone.
+- **Provider aliasing is essential.** Without scoped providers, managing account and workspace level resources is not possible.
 - **Group ID resolution is the secret sauce.** By dynamically resolving group IDs, we avoid brittle hardcoding and enable real IAM integration.
 
 ---
