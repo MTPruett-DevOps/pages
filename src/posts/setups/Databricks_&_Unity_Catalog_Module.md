@@ -35,15 +35,6 @@ It also prepares Unity Catalog access by defining:
 💡 **Provider:** `databricks.account`  
 📍Scope: Account-level operations
 
-```hcl
-provider "databricks" {
-  alias  = "account"
-  host   = "https://accounts.azuredatabricks.net"
-  account_id = var.account_id
-  azure_workspace_resource_id = var.databricks_workspace.id
-}
-```
-
 ---
 
 ### 2. `workspace`: Assign the Metastore
@@ -78,17 +69,21 @@ To support both account- and workspace-level operations, the module requires **t
 
 ```hcl
 provider "databricks" {
-  alias = "account"
-  ...
+  alias  = "account"
+  host   = "https://accounts.azuredatabricks.net"
+  account_id = var.account_id
+  azure_workspace_resource_id = var.databricks_workspace.resource_id
 }
 
 provider "databricks" {
-  alias = "workspace"
-  ...
+  alias                       = "workspace"
+  host                        = var.databricks_workspace.url
+  azure_workspace_resource_id = var.databricks_workspace.resource_id
 }
 ```
 
 Each internal module accepts a `providers` block that tells it which scope to use. This design allows flexibility and isolates responsibilities cleanly.
+We have set our subscription, client id, and client secret through the following environment variables on the Terraform Cloud Workspace: ARM_SUBSCRIPTION_ID, ARM_CLIENT_ID, ARM_CLIENT_SECRET
 
 ---
 
