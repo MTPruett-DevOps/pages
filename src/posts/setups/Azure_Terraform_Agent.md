@@ -27,7 +27,7 @@ This lets you get a running agent with minimal manual steps, while keeping secre
 
 ## Prerequisites
 
-- Azure VM (Ubuntu 24.04 LTS recommended) with Docker installed
+- Azure VM (Ubuntu 24.04 LTS recommended) with [Docker](https://docs.docker.com/engine/install/ubuntu/) installed
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt) (instructions below)
 - The VM must have a [System Assigned Managed Identity](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) enabled
 - The VM’s managed identity must have **Get** and **List** permission for your Key Vault secret (Terraform Cloud agent token)
