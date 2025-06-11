@@ -60,22 +60,28 @@ Paste in the following script, and **update the three variables near the top** (
 #!/bin/bash
 set -e
 
-# Authenticate as the VM's managed identity (no user login required)
 az login --identity
+az account set --subscription "<YOUR-SUBSCRIPTION-ID-OR-NAME>"
 
-# CONFIGURE THESE VALUES
-KEYVAULT_NAME="your-keyvault-name"      # <-- your Key Vault name
-SECRET_NAME="tfc-agent-token"           # <-- your secret name in Key Vault
-AGENT_NAME="Agent007"                   # <-- whatever you want your agent to be called
+KEYVAULT_NAME="your-keyvault-name"
+SECRET_NAME="tfc-agent-token"
+AGENT_NAME="Agent007"
 
-# Get the token from Key Vault using the VM's managed identity
 TOKEN=$(az keyvault secret show --vault-name "$KEYVAULT_NAME" --name "$SECRET_NAME" --query value -o tsv)
 
-# Run the Docker container with the retrieved token
-docker run --rm --name tfc-agent   -e TFC_AGENT_TOKEN="$TOKEN"   -e TFC_AGENT_NAME="$AGENT_NAME"   hashicorp/tfc-agent:latest
+ENV_FILE="/tmp/tfc-agent.env"
+echo "TFC_AGENT_TOKEN=$TOKEN" > $ENV_FILE
+echo "TFC_AGENT_NAME=$AGENT_NAME" >> $ENV_FILE
+chmod 600 $ENV_FILE
+
+docker run --rm --name tfc-agent --env-file $ENV_FILE hashicorp/tfc-agent:latest
+
+rm -f $ENV_FILE
 ```
 
 Save and exit (`Ctrl+O`, then `Enter`, then `Ctrl+X`).
+Note:
+We’re using a temporary environment file to securely pass the agent token and name to Docker. The environment file is created just before the agent starts and is deleted immediately afterward. This allows us to retrieve the token from Key Vault at runtime, without ever storing it in plain text on disk long-term. If you inspect the running systemd service or process list, you won’t see the token exposed.
 
 ---
 
