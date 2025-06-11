@@ -80,8 +80,8 @@ rm -f $ENV_FILE
 ```
 
 Save and exit (`Ctrl+O`, then `Enter`, then `Ctrl+X`).
-Note:
-We’re using a temporary environment file to securely pass the agent token and name to Docker. The environment file is created just before the agent starts and is deleted immediately afterward. This allows us to retrieve the token from Key Vault at runtime, without ever storing it in plain text on disk long-term. If you inspect the running systemd service or process list, you won’t see the token exposed.
+> **Note:**  
+> We’re using a temporary environment file to securely pass the agent token and name to Docker. The environment file is created just before the agent starts and is deleted immediately afterward. This allows us to retrieve the token from Key Vault at runtime, without ever storing it in plain text on disk long-term. If you inspect the running systemd service or process list, you won’t see the token exposed.
 
 ---
 
