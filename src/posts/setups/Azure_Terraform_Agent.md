@@ -30,7 +30,7 @@ This lets you spin up a VM and get a running agent with minimal manual steps, wh
 - Azure VM (Ubuntu 24.04 LTS recommended) with Docker installed
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt) (instructions below)
 - The VM must have a [System Assigned Managed Identity](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) enabled
-- The VM’s managed identity must have **Get** permission for your Key Vault secret (Terraform Cloud agent token)
+- The VM’s managed identity must have **Get** and **List** permission for your Key Vault secret (Terraform Cloud agent token)
 - The agent token must already exist as a secret in your Key Vault
 
 ---
@@ -178,7 +178,7 @@ You should see `active (running)` if everything is working.
 
 ## Final Notes
 
-- **Security:** This solution keeps your secrets out of source code and off disk, using only managed identities and Key Vault.
+- **Security:** This approach keeps us from having to store our Terraform Cloud Agent token in plain text on disk, by retrieving it securely from Azure Key Vault at runtime using managed identity.
 - **Temporary:** This setup is meant as a bridge while we move to AKS + Helm for full automation and scalability.
 - **Clean up:** When you no longer need the VM-based agent, simply stop and disable the systemd service, or delete the VM.
 
