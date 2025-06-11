@@ -21,7 +21,7 @@ This guide walks you through a secure, repeatable way to run [Terraform Cloud Ag
 - **systemd** for automated and reliable startup
 - **Docker** to run the agent container
 
-This lets you spin up a VM and get a running agent with minimal manual steps, while keeping secrets out of source code.
+This lets you get a running agent with minimal manual steps, while keeping secrets out of plain text.
 
 ---
 
@@ -178,7 +178,7 @@ You should see `active (running)` if everything is working.
 
 ## Final Notes
 
-- **Security:** This approach keeps us from having to store our Terraform Cloud Agent token in plain text on disk, by retrieving it securely from Azure Key Vault at runtime using managed identity.
+- **Security:** This approach keeps us from having to store our Terraform Cloud Agent token in plain text, by retrieving it securely from Azure Key Vault at runtime using managed identity.
 - **Temporary:** This setup is meant as a bridge while we move to AKS + Helm for full automation and scalability.
 - **Clean up:** When you no longer need the VM-based agent, simply stop and disable the systemd service, or delete the VM.
 
