@@ -183,3 +183,7 @@ You should see `active (running)` if everything is working.
 - **Clean up:** When you no longer need the VM-based agent, simply stop and disable the systemd service, or delete the VM.
 
 ---
+
+[^1]: If you want a bit of a deeper dive into systemd, check this out: [Creating and Managing Custom systemd Services on Ubuntu](https://dev.to/edgaras/creating-and-managing-custom-systemd-services-on-ubuntu-dkh)
+
+---
